@@ -5,9 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -17,11 +18,14 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import java.time.LocalDate
+import java.util.*
 
 class LoginPage : AppCompatActivity() {
     lateinit var loginbtn : Button
@@ -36,6 +40,13 @@ class LoginPage : AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
     private lateinit var auth: FirebaseAuth
     private lateinit var spinner: ProgressBar
+    var currentdate:Int = 0
+    var currentmonth:Int = 0
+    var currentyear:Int = 0
+    var totaldays:Int = 0
+    var remainingdays:Int = 0
+    var dbmonth:Int = 0
+    var dbyear:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +86,17 @@ class LoginPage : AppCompatActivity() {
 
         //spinner
         spinner = findViewById<ProgressBar>(R.id.progressBar1)
+
+        //Getting current calendar details
+        val c = Calendar.getInstance()
+        currentyear = c.get(Calendar.YEAR)
+        currentmonth = c.get(Calendar.MONTH)
+        currentdate = c.get(Calendar.DAY_OF_MONTH)
+        totaldays = c.getActualMaximum(Calendar.DAY_OF_MONTH)
+        remainingdays = totaldays - currentdate
+        Log.d("Days current",currentdate.toString())
+        Log.d("Days total",totaldays.toString())
+        Log.d("Days remain",remainingdays.toString())
 
         //On clicklistener for Forgot Button
         forgotbtn.setOnClickListener {
@@ -154,6 +176,10 @@ class LoginPage : AppCompatActivity() {
                 //Log.i("flagID",flag)
 
                 loggedindevice = p0.child("LoggedInDevice").value.toString()
+                dbmonth = p0.child("ChangedMonth").value.toString().toInt()
+                dbyear = p0.child("ChangedYear").value.toString().toInt()
+
+
 
                 //If loggedin devices is more than three then don't save shared preference
                 //So it'll not keep user logged in
@@ -165,11 +191,32 @@ class LoginPage : AppCompatActivity() {
                 }
 
                 if(flag=="1") {
-
-                    if (loggedindevice == "3"){
+                    //Check if month changed or not
+                    if (dbmonth != currentmonth){
+                        databaseRef.child(user.uid).child("LoggedInDevice").setValue("1")
+                        databaseRef.child(user.uid).child("ChangedMonth").setValue(currentmonth)
+                        databaseRef.child(user.uid).child("ChangedYear").setValue(currentyear)
+                        getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putBoolean("isLoggedin", true).apply()
+                        getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putString("Flag", flag).apply()
+                        startActivity(Intent(this@LoginPage, userdashboard::class.java))
+                        finish()
+                    }
+                    //If month is same then check year
+                    else if (dbmonth == currentmonth && dbyear != currentyear){
+                        databaseRef.child(user.uid).child("LoggedInDevice").setValue("1")
+                        databaseRef.child(user.uid).child("ChangedMonth").setValue(currentmonth)
+                        databaseRef.child(user.uid).child("ChangedYear").setValue(currentyear)
+                        getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putBoolean("isLoggedin", true).apply()
+                        getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putString("Flag", flag).apply()
+                        startActivity(Intent(this@LoginPage, userdashboard::class.java))
+                        finish()
+                    }
+                    else if (loggedindevice == "3"){
                         val builder = AlertDialog.Builder(this@LoginPage)
-                        builder.setTitle("Warning")
-                        builder.setMessage("You can't login on more than 3 devices")
+                        builder.setTitle("Warning- Exceed Device Limit")
+                        builder.setMessage("If want to LOGIN on this Device \n"+"\nYou have to LOGOUT from another devices\n" +
+                                "\t\t\t\t\t\t\t\tOr\n" +
+                                "Try again after "+remainingdays+" days")
                         builder.setPositiveButton("Continue") { dialog, which ->
                             //Toast.makeText(applicationContext, "continuar", Toast.LENGTH_SHORT).show()
                         }
@@ -197,7 +244,6 @@ class LoginPage : AppCompatActivity() {
                     finish()
                 }
             }
-
         })
 
     }
@@ -235,6 +281,7 @@ class LoginPage : AppCompatActivity() {
         }
     }
 
+    //Code for granting permission from user for storage
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class SignUp : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -33,6 +34,8 @@ class SignUp : AppCompatActivity() {
     lateinit var password: String
     lateinit var name: String
     lateinit var phoneno: String
+    var currentmonth:Int = 0
+    var currentyear:Int = 0
     private lateinit var spinner: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +58,11 @@ class SignUp : AppCompatActivity() {
 
         //spinner
         spinner = findViewById<ProgressBar>(R.id.progressBar1)
+
+        val c = Calendar.getInstance()
+         currentyear = c.get(Calendar.YEAR)
+         currentmonth = c.get(Calendar.MONTH)
+
 
 
         //Code for hide keyboard if touched anywhere
@@ -113,6 +121,8 @@ class SignUp : AppCompatActivity() {
                 databaseRef.child("Auth").child("AllUsers").child(user.uid).child("Username").setValue(name)
                 databaseRef.child("Auth").child("AllUsers").child(user.uid).child("UserID").setValue(flag)
                 databaseRef.child("Auth").child("AllUsers").child(user.uid).child("LoggedInDevice").setValue("1")
+                databaseRef.child("Auth").child("AllUsers").child(user.uid).child("ChangedMonth").setValue(currentmonth)
+                databaseRef.child("Auth").child("AllUsers").child(user.uid).child("ChangedYear").setValue(currentyear)
 
                 startActivity(Intent(this,userdashboard::class.java))
                 finish()

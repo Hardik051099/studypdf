@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,17 +20,36 @@ class MainActivity : AppCompatActivity() {
             //Global declaration of variables
             lateinit var anim_fade_in : Animation
             lateinit var logo : ImageView
+            var currentmonth:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //Declaration of variable for first time run
-        val isFirstRun =
-            getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE)
-                .getBoolean("isFirstRun", true)
+        //Declaration of sharedpreference for first time run
+        val isFirstRun = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getBoolean("isFirstRun", true)
+
+        //Declaration of sharedpreference for keeping logged in
         val isLoggedin = getSharedPreferences("Loggedin", Context.MODE_PRIVATE).getBoolean("isLoggedin", false)
         val flag = getSharedPreferences("Loggedin",Context.MODE_PRIVATE).getString("Flag","Null")
+
+        //Declaration of sharedpreference for saving last month details
+        val lastmonth = getSharedPreferences("Loggedin", Context.MODE_PRIVATE).getInt("lastmonth", 0)
+        val c = Calendar.getInstance()
+
+        currentmonth = c.get(Calendar.MONTH)
+        if(isFirstRun){
+            getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putInt("lastmonth", currentmonth).apply()
+        }
+        else{
+            //if month changed then set logged in details to start and go to login page
+            if(currentmonth != lastmonth){
+                getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putInt("lastmonth", currentmonth).apply()
+                getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putBoolean("isLoggedin", false).apply()
+                getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putString("Flag","Null").apply()
+               // startActivity(Intent(this@MainActivity,LoginPage::class.java))
+            }
+        }
 
 
             //Assigning ID's of Views to Variables
@@ -51,7 +71,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 //Else opens next activity
                 else{
-
                     if (isLoggedin){
                         if (isOnline(this@MainActivity)){
                             if (flag == "1"){
