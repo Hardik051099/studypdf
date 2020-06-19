@@ -176,10 +176,6 @@ class LoginPage : AppCompatActivity() {
                 //Log.i("flagID",flag)
 
                 loggedindevice = p0.child("LoggedInDevice").value.toString()
-                dbmonth = p0.child("ChangedMonth").value.toString().toInt()
-                dbyear = p0.child("ChangedYear").value.toString().toInt()
-
-
 
                 //If loggedin devices is more than three then don't save shared preference
                 //So it'll not keep user logged in
@@ -192,6 +188,8 @@ class LoginPage : AppCompatActivity() {
 
                 if(flag=="1") {
                     //Check if month changed or not
+                    dbmonth = p0.child("ChangedMonth").value.toString().toInt()
+                    dbyear = p0.child("ChangedYear").value.toString().toInt()
                     if (dbmonth != currentmonth){
                         databaseRef.child(user.uid).child("LoggedInDevice").setValue("1")
                         databaseRef.child(user.uid).child("ChangedMonth").setValue(currentmonth)
