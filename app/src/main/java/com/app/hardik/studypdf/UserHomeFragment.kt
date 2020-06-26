@@ -156,7 +156,7 @@ class UserHomeFragment : Fragment() {
     fun listreader (parent:Item,parentlist:ArrayList<RecyclerViewItem>,p0:DataSnapshot,lvl:Int) {
         val parentlist = parentlist as MutableList<Item>
         var lvl = lvl
-        if (!(p0.hasChildren())){
+        if (!(p0.hasChildren()) && lvl != 0){
             //to check if given subject has pdfs available or not
             var name = p0.key.toString()
             Log.i("Leaf node", name+" at level $lvl")

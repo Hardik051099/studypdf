@@ -53,16 +53,6 @@ class AddIntoList : AppCompatActivity() {
                 }
 
         }
-       /* Delete.setOnClickListener {
 
-            Departmentval = Department.text.toString()
-            Streamval = Stream.text.toString()
-            Semesterval = Semester.text.toString()
-            Subjectval = Subject.text.toString()
-
-            databaseRef.child("StreamList").child(Streamval).child(Departmentval)
-                .child(Semesterval).child(Subjectval).setValue(null)
-            Toast.makeText(this,"Deleted Successfully",Toast.LENGTH_LONG).show()
-        } */
     }
 }

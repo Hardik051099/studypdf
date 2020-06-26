@@ -46,7 +46,7 @@ public class UserAdapter extends MultiLevelAdapter {
         mViewHolder = (Holder) holder;
         mItem = mListItems.get(position);
 
-        switch (getItemViewType(position)) {
+        switch (getItemViewType(position)%4) {
             case 1:
                 holder.itemView.setBackgroundResource(R.drawable.customshape2);
                // ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.itemView.getLayoutParams();

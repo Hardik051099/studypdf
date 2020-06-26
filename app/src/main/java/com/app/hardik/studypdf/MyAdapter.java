@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DatabaseReference;
@@ -41,6 +42,7 @@ public class MyAdapter extends MultiLevelAdapter {
     private MultiLevelRecyclerView mMultiLevelRecyclerView;
     private FirebaseDatabase db;
     private DatabaseReference dbrefer;
+
 
 
     MyAdapter(Context mContext, List<Item> mListItems, MultiLevelRecyclerView mMultiLevelRecyclerView) {
@@ -71,7 +73,7 @@ public class MyAdapter extends MultiLevelAdapter {
         //Changing Color range of all items according to the mode
         if(Apple.INSTANCE.getUpdateClicked() == 1) {
             //ADD Mode :- Blue color range
-            switch (getItemViewType(position)) {
+            switch (getItemViewType(position)%4) {
                 case 0:
                     holder.itemView.setBackgroundColor(Color.parseColor("#dbf3fa"));
                     break;
@@ -92,7 +94,7 @@ public class MyAdapter extends MultiLevelAdapter {
         }
         else if (Apple.INSTANCE.getUpdateClicked() == 0){
             //Default mode
-            switch (getItemViewType(position)) {
+            switch (getItemViewType(position)%4) {
                 case 0:
                     holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
                     break;
@@ -112,7 +114,7 @@ public class MyAdapter extends MultiLevelAdapter {
         }
         else if (Apple.INSTANCE.getUpdateClicked() == 2){
             //DELETE Mode :- Red color range
-            switch (getItemViewType(position)) {
+            switch (getItemViewType(position)%4) {
                 case 0:
                     holder.itemView.setBackgroundColor(Color.parseColor("#F6BDC0"));
                     break;
@@ -132,7 +134,20 @@ public class MyAdapter extends MultiLevelAdapter {
         }
 
         mViewHolder.mTitle.setText(mItem.getText());
-        mViewHolder.mSubtitle.setText(mItem.getSecondText());
+        if(Apple.INSTANCE.getUpdateClicked() == 1){
+            mViewHolder.mSubtitle.setText("Long Click here to add New Element");
+        }
+        else if (Apple.INSTANCE.getUpdateClicked() == 2){
+            if(mItem.text.equals("All Available Categories")){
+
+            }
+            else{
+            mViewHolder.mSubtitle.setText("Long Click here to delete this Element");
+            }
+        }
+        else {
+            mViewHolder.mSubtitle.setText(mItem.getSecondText());
+        }
 
         if (mItem.hasChildren() && mItem.getChildren().size() > 0) {
             setExpandButton(mViewHolder.mExpandIcon, mItem.isExpanded());
@@ -147,7 +162,7 @@ public class MyAdapter extends MultiLevelAdapter {
         // Note: the parent item should start at zero to have no indentation
         float density = mContext.getResources().getDisplayMetrics().density;
         ((ViewGroup.MarginLayoutParams) mViewHolder.mTextBox.getLayoutParams()).leftMargin = (int) ((getItemViewType(position) * 20) * density + 0.5f);
-      // mViewHolder.leafgive();
+        //((ViewGroup.MarginLayoutParams) mViewHolder.itemView.getLayoutParams()).leftMargin = (int) ((getItemViewType(position) * 20) * density + 0.5f);
     }
 
     private class Holder extends RecyclerView.ViewHolder {
@@ -175,13 +190,13 @@ public class MyAdapter extends MultiLevelAdapter {
                     mExpandIcon.animate().rotation(mListItems.get(getAdapterPosition()).isExpanded() ? 0 : -180).start();
                     //set click event on item here
                    // Toast.makeText(mContext, String.format(Locale.ENGLISH, "Item at position %d was clicked!", getAdapterPosition()), Toast.LENGTH_SHORT).show();
-                   if(Apple.INSTANCE.getUpdateClicked() == 1){
-                       if(mListItems.get(getAdapterPosition()).getText().equals("New +")){
-                           Intent in = new Intent(v.getRootView().getContext(),AddIntoList.class);
-                           in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                           v.getRootView().getContext().startActivity(in);
-                       }
-                   }
+                 /*  if(Apple.INSTANCE.getUpdateClicked() == 1){
+                        if(mListItems.get(getAdapterPosition()).getText().equals("New +")){
+                            Intent in = new Intent(v.getRootView().getContext(),AddIntoList.class);
+                            in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            v.getRootView().getContext().startActivity(in);
+                        }
+                    } */
                 }
             });
             //Events to occur after long clicking any item of our listview
@@ -189,10 +204,11 @@ public class MyAdapter extends MultiLevelAdapter {
                 @Override
                 public boolean onLongClick(View v) {
 
-                    if (mListItems.get(getAdapterPosition()).getText().equals("New +")|| mListItems.get(getAdapterPosition()).getText().equals("All Available Categories")){
+                    if (mListItems.get(getAdapterPosition()).getText().equals("All Available Categories")){
                         return false;
                     }
 
+                    //Initializing AlertDialog
                     AlertDialog.Builder alert = new AlertDialog.Builder(v.getRootView().getContext());
                     int level = mListItems.get(getAdapterPosition()).getLevel();
                     final String currentName = mListItems.get(getAdapterPosition()).text;
@@ -227,7 +243,10 @@ public class MyAdapter extends MultiLevelAdapter {
 
 
                   //Method to get path of current selected item
-                  if (level == 0) {
+                    if(mListItems.get(getAdapterPosition()).text.equals("New +")){
+                        path = "StreamList";
+                    }
+                    else if (level == 0) {
                         path = "StreamList/" + currentName;
                     }
                     else {
@@ -242,8 +261,8 @@ public class MyAdapter extends MultiLevelAdapter {
                         Log.i("genpath",path);
                     }
 
-
                     final String finalPath = path;
+
                     if(Apple.INSTANCE.getUpdateClicked() == 2) {
                         //Toast.makeText(mContext, String.format(Locale.ENGLISH, "Item at position %d was LONG clicked!", getAdapterPosition()), Toast.LENGTH_LONG).show();
 
@@ -257,14 +276,13 @@ public class MyAdapter extends MultiLevelAdapter {
                                 db = FirebaseDatabase.getInstance();
                                 dbrefer = db.getReference(finalPath);
                                 Log.i("finall delete",finalPath);
-
                                 //deleting item from database
                                 dbrefer.setValue(null);
                                 dbrefer = db.getReference("SubjectPath");
                                 dbrefer.child(currentName).setValue(null);
                                 Toast.makeText(mContext,"Element Deleted successfully,Swipe Down to Refresh",Toast.LENGTH_LONG).show();
-                              //  listFragment.reload();
-                            }
+                             //  mlistFragment.reload();
+                                  }
                         });
                         alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -274,17 +292,9 @@ public class MyAdapter extends MultiLevelAdapter {
                         alert.show();
 
 
-
                     }
                     else if (Apple.INSTANCE.getUpdateClicked() == 1){
-
-                      /*  if(mListItems.get(getAdapterPosition()).getLevel() == 3){
-                            Toast.makeText(mContext,"You Can't Add here!",Toast.LENGTH_SHORT).show();
-                            return false;
-                        } */
-
                         final String finalPath2 = path+"/";
-                       final String title = path+"-";
 
                        //alert dilogue for adding element in database
                         alert.setTitle("Adding new element...");
@@ -324,7 +334,17 @@ public class MyAdapter extends MultiLevelAdapter {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 db = FirebaseDatabase.getInstance();
                                 dbrefer = db.getReference();
+
+                                /*store input from user along with its parent elements in adder variable
+                                for ex:- User adds child under "SEM 4" element and names it as "OOPM"
+                                 hence the value of adder will be "StreamList/Engineering/Computer Science/SEM 4/OOPM"
+                                 */
                                 String adder = input.getText().toString().trim();
+
+                                /*since our edittext already contains its parent elements (for getting the path)
+                                  so we split the adder variable and store actual input given by user in subname variable
+                                   hence the value of subname will be "OOPM"
+                                  */
                                 String subname = adder.substring(adder.lastIndexOf("/") + 1);
                                 Log.i("subname",subname);
 
@@ -334,9 +354,14 @@ public class MyAdapter extends MultiLevelAdapter {
                                     return;
                                 }
                                 Log.i("finall add",adder);
+                                try{
                                 dbrefer.child(adder).setValue(adder);
                                 dbrefer.child("SubjectPath").child(subname).setValue(adder);
                                 dbrefer.child("SubjectPath").child(currentName).setValue(null);
+                                }
+                                catch (Exception e){
+                                    Toast.makeText(mContext,String.valueOf(e),Toast.LENGTH_LONG).show();
+                                }
                                 Toast.makeText(mContext,"New Element added successfully,Swipe Down to Refresh",Toast.LENGTH_LONG).show();
 
                             }

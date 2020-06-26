@@ -1,12 +1,7 @@
 package com.app.hardik.studypdf
 
-import android.app.Activity
-import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -17,6 +12,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 lateinit var bottomNavigation: BottomNavigationView
 
+//This Activity is for AdminDashboard , it has not much use only to hold and display fragments
+
 class Admindashboard : AppCompatActivity() {
 
     lateinit var nav_menu: Menu
@@ -24,6 +21,7 @@ class Admindashboard : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admindashboard)
+        //Initializing Navigation bar items
         bottomNavigation = findViewById(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
         bottomNavigation.checkItem(R.id.navigation_home)
@@ -33,19 +31,23 @@ class Admindashboard : AppCompatActivity() {
         nav_menu.findItem(R.id.navigation_home).setVisible(false)
         nav_menu.findItem(R.id.navigation_list).setVisible(false)
         nav_menu.findItem(R.id.navigation_users).setVisible(false)
+        //Call default fragment to open
         openFragment(HomeFragment.newInstance("", ""));
 
     }
+    //function to set Home icon checked by default
     internal fun BottomNavigationView.checkItem(actionId: Int) {
         menu.findItem(actionId)?.isChecked = true
     }
-
+    //This function opens fragments
     fun openFragment(fragment: Fragment) {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
     }
+
+    //Navigation bar listener
    var navigationItemSelectedListener: BottomNavigationView.OnNavigationItemSelectedListener? =
        object : BottomNavigationView.OnNavigationItemSelectedListener {
           override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -76,6 +78,8 @@ class Admindashboard : AppCompatActivity() {
            }
        }
     private var exit = false
+
+    //Back pressed
     override fun onBackPressed() {
         if (exit) {
             finish() // finish activity

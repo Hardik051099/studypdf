@@ -61,7 +61,7 @@ public class UploadAdapter extends MultiLevelAdapter {
         mViewHolder = (Holder) holder;
         mItem = mListItems.get(position);
 
-        switch (getItemViewType(position)) {
+        switch (getItemViewType(position)%4) {
             case 0:
                 holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
                 break;

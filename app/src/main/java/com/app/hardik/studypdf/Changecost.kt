@@ -8,8 +8,10 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
 
+//This Activity is for Changing Cost of any pdfs available in our database
 
 class Changecost : AppCompatActivity() {
+
     lateinit var firebaseDatabase: FirebaseDatabase
     lateinit var databaseReference: DatabaseReference
     var parentname : String = ""
@@ -22,6 +24,8 @@ class Changecost : AppCompatActivity() {
 
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReference = firebaseDatabase.getReference()
+
+
         val arrayList: ArrayList<String> = ArrayList()
         var arrayAdapter: ArrayAdapter<String?>
         val listView = findViewById<ListView>(R.id.pdflist)
@@ -30,6 +34,8 @@ class Changecost : AppCompatActivity() {
             android.R.layout.simple_list_item_1,
             arrayList as List<String?>?
         )
+
+        //This listener will listen all Pdfs uploaded in database and will populate them in list view
         databaseReference.child("Links").addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
@@ -44,9 +50,9 @@ class Changecost : AppCompatActivity() {
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-                val pdfname = p0.key.toString()
-                val price = p0.child("price").value.toString()
-                arrayList.add(pdfname+"."+" \n "+"₹ "+price)
+                val pdfname = p0.key.toString() //name of pdf
+                val price = p0.child("price").value.toString() //price
+                arrayList.add(pdfname+"."+" \n "+"₹ "+price) //adding in list along with current price
 
                 listView.adapter = arrayAdapter
             }
@@ -65,6 +71,8 @@ class Changecost : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
+                //Alert dialogue to display after any item is clicked
+                //with an edittext to enter new price
                 val alert: AlertDialog.Builder = AlertDialog.Builder(this@Changecost)
                 var edittext = EditText(this@Changecost)
                 alert.setMessage("Enter New Cost")
@@ -74,6 +82,7 @@ class Changecost : AppCompatActivity() {
                 ) { dialog, whichButton ->
                     val newcost = edittext.text.toString()
                     val itemname = arrayList.get(position).substringBefore("."," ")
+                    //updating pdf price in both database trees "Links" and "Uploads"
                     databaseReference.child("Links").child(itemname)
                         .addListenerForSingleValueEvent(object :
                             ValueEventListener {

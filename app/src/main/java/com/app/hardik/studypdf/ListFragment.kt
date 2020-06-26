@@ -90,7 +90,7 @@ class ListFragment : Fragment() {
             //when ADD Mode is on
 
             item.setText("New +")
-            item.setSecondText("If You are adding New List Or for custom add Click here")
+            item.setSecondText("Long Click here to add New Element")
         }
         else{
             //Default text to shown , even in DELETE Mode
@@ -113,7 +113,6 @@ class ListFragment : Fragment() {
 
         //assiging values to adapter
         myAdapter = MyAdapter(view.context, Level0list, multiLevelRecyclerView)
-
         //assiging adapter to multiLevelRecyclerView
         multiLevelRecyclerView.adapter = myAdapter
 
@@ -133,7 +132,6 @@ class ListFragment : Fragment() {
                 Toast.makeText(view.context,"Disable DELETE Mode First",Toast.LENGTH_LONG).show()
             }
             reload()
-
         }
         view.delete.setOnClickListener{
             if(t==0){
@@ -214,7 +212,6 @@ class ListFragment : Fragment() {
                 myAdapter.notifyDataSetChanged()
             }
             override fun onChildRemoved(p0: DataSnapshot) {
-                reload()
             }
         })
     }
@@ -234,7 +231,7 @@ class ListFragment : Fragment() {
 fun listreader (parent:Item,parentlist:ArrayList<RecyclerViewItem>,p0:DataSnapshot,lvl:Int) {
        val parentlist = parentlist as MutableList<Item>
         var lvl = lvl
-    if (!(p0.hasChildren())){
+    if (!(p0.hasChildren()) && lvl != 0){
             Log.i("Leaf node", p0.key.toString()+" "+parent.getText() +"at level $lvl")
         parent.setSecondText("__")
         }

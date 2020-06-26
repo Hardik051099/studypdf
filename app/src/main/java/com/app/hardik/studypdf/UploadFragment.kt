@@ -164,7 +164,7 @@ class UploadFragment : Fragment() {
     fun listreader (parent:Item,parentlist:ArrayList<RecyclerViewItem>,p0:DataSnapshot,lvl:Int) {
         val parentlist = parentlist as MutableList<Item>
         var lvl = lvl
-        if (!(p0.hasChildren())){
+        if (!(p0.hasChildren()) && lvl != 0){
             Log.i("Leaf node", p0.key.toString()+" at level $lvl")
             parent.setSecondText("__")
         }
