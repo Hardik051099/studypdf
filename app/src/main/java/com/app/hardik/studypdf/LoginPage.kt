@@ -27,6 +27,9 @@ import com.google.firebase.database.*
 import java.time.LocalDate
 import java.util.*
 
+//Login page for user to get logged in our app
+//here also user asked for Storage Permission
+
 class LoginPage : AppCompatActivity() {
     lateinit var loginbtn : Button
     lateinit var newusrbtn : Button
@@ -52,17 +55,13 @@ class LoginPage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_page)
 
+        //If App has not allowed Storage permission then ask for it
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
             != PackageManager.PERMISSION_GRANTED
         ) {
-            /*val intent = Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:$packageName")
-            )
-            startActivity(intent)*/
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),

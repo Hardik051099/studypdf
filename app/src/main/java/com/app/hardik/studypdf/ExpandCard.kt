@@ -8,6 +8,8 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 
+//This Activity Shows each users total pdfs and also total money they spent on this pdfs
+
 class ExpandCard : AppCompatActivity() {
     var costnamefirst: Int = 0
     var costnamelast: Int = 0

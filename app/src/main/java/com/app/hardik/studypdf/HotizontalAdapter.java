@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+//this adapter for horizontal cardview in admin home page that shows statistics
+
 public class HotizontalAdapter extends RecyclerView.Adapter<HotizontalAdapter.MyViewHolder> {
     private LayoutInflater inflater;
-    private ArrayList<FruitModel> imageModelArrayList;
+    private ArrayList<Stats> imageModelArrayList;
 
-    public HotizontalAdapter(Context ctx, ArrayList<FruitModel> imageModelArrayList){
+    public HotizontalAdapter(Context ctx, ArrayList<Stats> imageModelArrayList){
 
         inflater = LayoutInflater.from(ctx);
         this.imageModelArrayList = imageModelArrayList;

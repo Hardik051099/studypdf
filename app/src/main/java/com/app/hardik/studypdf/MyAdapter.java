@@ -3,7 +3,6 @@ package com.app.hardik.studypdf;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.Selection;
@@ -18,21 +17,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.multilevelview.MultiLevelAdapter;
 import com.multilevelview.MultiLevelRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import static java.lang.System.exit;
-
+//This is Adapter for MultiLevelRecyclerView of ListFragment
 
 public class MyAdapter extends MultiLevelAdapter {
     private Holder mViewHolder;

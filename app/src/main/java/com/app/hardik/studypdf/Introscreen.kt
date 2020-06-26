@@ -1,18 +1,18 @@
 package com.app.hardik.studypdf
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Layout
-import android.util.Log
-import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.*
-import androidx.annotation.RequiresApi
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.SeekBar
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+
+//This is Onboarding/Introscreen of our app which is only shown to user once
 
 class Introscreen : AppCompatActivity() {
 
@@ -60,7 +60,6 @@ class Introscreen : AppCompatActivity() {
                 if (seek.progress == 1){
                     welcomeimg.setImageResource(R.drawable.intro1)
                     welcometxt.setText("Learning is MORE effective when it is ACTIVE rather than a passive process.")
-                    nextbtn.text = "Next"
                     nextbtn.text = "Next"
                     return
                 }

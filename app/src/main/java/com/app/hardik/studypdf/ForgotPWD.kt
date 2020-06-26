@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
+//This Activity is for User to reset their password
 
 class ForgotPWD : AppCompatActivity() {
     lateinit var femail : EditText

@@ -10,17 +10,22 @@ import android.widget.ListView
 import android.widget.Toast
 import com.google.firebase.database.*
 
+//This Activity is for Delete PDF section where an admin can Remove any PDF available in our database
+
 class Deletepdf : AppCompatActivity() {
+
     lateinit var firebaseDatabase: FirebaseDatabase
     lateinit var databaseReference: DatabaseReference
     var parentname : String = ""
     var path : String = ""
     var enc: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_deletepdf)
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReference = firebaseDatabase.getReference()
+
         val arrayList: ArrayList<String> = ArrayList()
         var arrayAdapter: ArrayAdapter<String?>
         val listView = findViewById<ListView>(R.id.pdflist)
@@ -29,6 +34,8 @@ class Deletepdf : AppCompatActivity() {
             android.R.layout.simple_list_item_1,
             arrayList as List<String?>?
         )
+
+        //getting list of all available pdfs
         databaseReference.child("Links").addChildEventListener(object : ChildEventListener{
             override fun onCancelled(p0: DatabaseError) {
 
@@ -63,6 +70,7 @@ class Deletepdf : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
+                //deleting selected pdf file from both "Links" and "uploads" tree
                 databaseReference.child("Links").child(arrayList.get(position)).addListenerForSingleValueEvent(object : ValueEventListener{
                     override fun onCancelled(p0: DatabaseError) {
 

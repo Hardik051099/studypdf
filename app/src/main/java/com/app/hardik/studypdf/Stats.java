@@ -1,6 +1,8 @@
 package com.app.hardik.studypdf;
 
-public class FruitModel {
+//This Class File is for Showing statistics in horizontal card view in admin home
+
+public class Stats {
 
     private String name;
     private int image_drawable;

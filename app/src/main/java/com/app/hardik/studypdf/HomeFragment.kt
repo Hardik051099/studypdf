@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -22,11 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 
 
@@ -45,6 +40,8 @@ var Total_revenue: Int = 0
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
+//This Fragment is for Home Screen of Admin
+//It shows Statistics of users,downloads,revenue and transaction history
 
 /**
  * A simple [Fragment] subclass.
@@ -64,7 +61,7 @@ class HomeFragment : Fragment() {
     var costnamelast: Int = 0
     var cost: Int = 0
     lateinit var recyclerView: RecyclerView
-    lateinit var imageModelArrayList: ArrayList<FruitModel>
+    lateinit var imageModelArrayList: ArrayList<Stats>
     lateinit var adapter: HotizontalAdapter
 
     lateinit var names: String
@@ -110,7 +107,7 @@ class HomeFragment : Fragment() {
         nav_menu.findItem(R.id.navigation_users).setVisible(false)
 
         recyclerView = view.findViewById(R.id.recycler)
-        imageModelArrayList =  ArrayList<FruitModel>()
+        imageModelArrayList =  ArrayList<Stats>()
 
 
 
@@ -137,14 +134,16 @@ class HomeFragment : Fragment() {
         var Done :Boolean = false           //Used to know if fetching from db is over or not
         database = FirebaseDatabase.getInstance()
         databaseReference = database.getReference()
+
+        //this listener used to get total count of users also stores each users username and email in hashmaps
         databaseReference.child("Users").child("Students").addListenerForSingleValueEvent(object :
             ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
             }
             override fun onDataChange(p0: DataSnapshot) {
                 //Saves usernames in menu list
-               // reload()
-                var fruitmodel = FruitModel()
+               // initializing stats
+                var userstats = Stats()
                 p0.children.mapNotNullTo(menu) {
                     it.child("Username").value
                 }
@@ -153,24 +152,25 @@ class HomeFragment : Fragment() {
                     it.child("Email").value
                 }
                 if(p0.exists()){
-                    fruitmodel.name =  p0.childrenCount.toString()
+                    userstats.name =  p0.childrenCount.toString()
 
                 }
                 else {
-                    fruitmodel.name =  "NA"
+                    userstats.name =  "NA"
                 }
-                fruitmodel.image_drawable = R.drawable.users4
-                imageModelArrayList.add(fruitmodel)
+                userstats.image_drawable = R.drawable.users4
+                imageModelArrayList.add(userstats)
             }
         })
+
+        //This listener for listening all transactions to get total downloads and also stores data
+        //related to transaction of each user in hashmaps
         databaseReference.child("Transactions").addListenerForSingleValueEvent(object :
             ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
             }
-          //  @RequiresApi(Build.VERSION_CODES.O)
             override fun onDataChange(p0: DataSnapshot) {
-                var fruitmodel2 = FruitModel()
-                // reload()
+                var downloadstats = Stats()
                 p0.children.mapNotNullTo(costs) {
                     it.child("value").value
                 }
@@ -184,15 +184,16 @@ class HomeFragment : Fragment() {
                     it.child("date").value
                 }
                 if(p0.exists()){
-                    fruitmodel2.name = p0.childrenCount.toString()
+                    downloadstats.name = p0.childrenCount.toString()
 
                 }
                 else {
                 }
-                fruitmodel2.image_drawable = R.drawable.downloading2
-                imageModelArrayList.add(fruitmodel2)
+                downloadstats.image_drawable = R.drawable.downloading2
+                imageModelArrayList.add(downloadstats)
+
                 // Calculation of total cost
-                var fruitmodel3 = FruitModel()
+                var revenuestats = Stats()
                 count = menu.indexOfFirst { true }
                 last  = menu.indexOfLast { true }
                 while (count <= last){
@@ -211,9 +212,9 @@ class HomeFragment : Fragment() {
                     count += 1
                 }
 
-                fruitmodel3.name = Total_revenue.toString()
-                fruitmodel3.image_drawable = R.drawable.rupees2
-                imageModelArrayList.add(fruitmodel3)
+                revenuestats.name = Total_revenue.toString()
+                revenuestats.image_drawable = R.drawable.rupees2
+                imageModelArrayList.add(revenuestats)
 
 
                 adapter = HotizontalAdapter(view.context, imageModelArrayList)

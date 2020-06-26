@@ -44,6 +44,9 @@ object Apple {
     var updateClicked : Int = 0
 }
 
+//This Fragment shows N-Level hierarchical tree of our database , also admin can add and delete element
+//at any level of this tree
+
 class ListFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -177,37 +180,6 @@ class ListFragment : Fragment() {
                 //calling listreader function
                 listreader(demoitem,demolist,p0,0)
 
-              /* IGNORE IGNORE IGNORE
-              HARD CODED WAY TO TRAVERSE LIST
-              val Level1list = ArrayList<RecyclerViewItem>() //as MutableList<Item>
-               val lvl0 = Item(0)
-               lvl0.setText(p0.key.toString())
-               Level0list.add(lvl0)
-               listreader(lvl0,Level1list,p0,1)
-             for (i in p0.children) {
-                       val lvl1 = Item(1)
-                       lvl1.setText(i.key.toString())
-                       Level1list.add(lvl1)
-                       lvl0.addChildren(Level1list as MutableList<RecyclerViewItem>)
-                   val Level2list = ArrayList<RecyclerViewItem>() as MutableList<Item>
-                   for (j in i.children) {
-                       val lvl2 = Item(2)
-                       lvl2.setText(j.key.toString())
-                       Level2list.add(lvl2)
-                       lvl1.addChildren(Level2list as MutableList<RecyclerViewItem>)
-                       val Level3list = ArrayList<RecyclerViewItem>() as MutableList<Item>
-                       for (k in j.children){
-                           val lvl3 = Item(3)
-                           lvl3.setText(k.key.toString())
-                           Level3list.add(lvl3)
-                           lvl2.addChildren(Level3list as MutableList<RecyclerViewItem>)
-
-                       }
-                   }
-                   listreader(lvl1,Level2list,i,2)
-               }
-               IGNORE IGNORE IGNORE */
-
                 //Updating Adapter to detect changes
                 myAdapter.notifyDataSetChanged()
             }
@@ -301,3 +273,33 @@ DataSnapshot { key = Engineering, value = {Computer Science={SEM 6={CSS=CSS, SE=
     IGNORE IGNORE IGNORE
 
      */
+/* IGNORE IGNORE IGNORE
+              HARD CODED WAY TO TRAVERSE LIST
+              val Level1list = ArrayList<RecyclerViewItem>() //as MutableList<Item>
+               val lvl0 = Item(0)
+               lvl0.setText(p0.key.toString())
+               Level0list.add(lvl0)
+               listreader(lvl0,Level1list,p0,1)
+             for (i in p0.children) {
+                       val lvl1 = Item(1)
+                       lvl1.setText(i.key.toString())
+                       Level1list.add(lvl1)
+                       lvl0.addChildren(Level1list as MutableList<RecyclerViewItem>)
+                   val Level2list = ArrayList<RecyclerViewItem>() as MutableList<Item>
+                   for (j in i.children) {
+                       val lvl2 = Item(2)
+                       lvl2.setText(j.key.toString())
+                       Level2list.add(lvl2)
+                       lvl1.addChildren(Level2list as MutableList<RecyclerViewItem>)
+                       val Level3list = ArrayList<RecyclerViewItem>() as MutableList<Item>
+                       for (k in j.children){
+                           val lvl3 = Item(3)
+                           lvl3.setText(k.key.toString())
+                           Level3list.add(lvl3)
+                           lvl2.addChildren(Level3list as MutableList<RecyclerViewItem>)
+
+                       }
+                   }
+                   listreader(lvl1,Level2list,i,2)
+               }
+               IGNORE IGNORE IGNORE */

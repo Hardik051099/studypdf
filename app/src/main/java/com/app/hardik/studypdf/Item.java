@@ -2,6 +2,8 @@ package com.app.hardik.studypdf;
 
 import com.multilevelview.models.RecyclerViewItem;
 
+//This is Model Class for each item of MultiLevelRecyclerView
+
 public class Item extends RecyclerViewItem {
 
     String text="";

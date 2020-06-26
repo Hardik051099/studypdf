@@ -1,5 +1,4 @@
 package com.app.hardik.studypdf
-//Splashscreen
 
 import android.content.Context
 import android.content.Intent
@@ -14,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
+//Splashscreen for our app also checks if user is already logged in
 
 class MainActivity : AppCompatActivity() {
 
