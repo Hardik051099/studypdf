@@ -16,6 +16,8 @@ import com.multilevelview.MultiLevelRecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+//This Adapter is for MultiLevelRecyclerView of UserHomeFragment.kt
+
 public class UserAdapter extends MultiLevelAdapter {
     private Holder mViewHolder;
     private Context mContext;

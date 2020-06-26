@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-//Missing comments can be found in MyAdapter.java file for common code
+//This Adapter is for MultiLevelRecyclerview in UploadFragment.kt
+
+//Missing comments can be found in ListAdapter.java file for common code
 
 public class UploadAdapter extends MultiLevelAdapter {
 

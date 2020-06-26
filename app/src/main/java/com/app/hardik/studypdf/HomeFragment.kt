@@ -24,6 +24,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
+//since this fragment is opened first , hence all global variables are declared here
+//to be used in other activities/fragments directly
 
 var menu = mutableListOf<Any>()         //List of usernames from Users
 var email = mutableListOf<Any>()        //List of emails from Users

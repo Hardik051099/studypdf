@@ -8,18 +8,17 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.tasks.Continuation
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
+//This is where admin selects file from internal storage
+//set its name and price and uploads it to firebase storage
 
 class Uploadsection : AppCompatActivity() {
     lateinit var choose: Button
@@ -59,25 +58,19 @@ class Uploadsection : AppCompatActivity() {
         upload.isEnabled = false
     }
 
-
+//choosefile button
     fun choosefile(v: View) {
         getPDF()
     }
-
-
-
+    //function makes user to browse internal storage to choose appropriate file
     private fun getPDF() {
+        //storage permission check
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
             != PackageManager.PERMISSION_GRANTED
         ) {
-            /*val intent = Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:$packageName")
-            )
-            startActivity(intent)*/
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
@@ -114,7 +107,7 @@ class Uploadsection : AppCompatActivity() {
                         Toast.makeText(this,"You can't leave fields empty!",Toast.LENGTH_SHORT).show()
                     }
                     else{
-
+                        //this listener checks if pdf file name is already exists
                         dbrefr.child("Links").addListenerForSingleValueEvent(object : ValueEventListener{
                             override fun onCancelled(p0: DatabaseError) {
 
@@ -126,7 +119,7 @@ class Uploadsection : AppCompatActivity() {
                                 }
                                 else {
                                     priceval = price.text.toString().trim()
-                                    uploadFile2(data.data)
+                                    uploadFile(data.data)
                                 }
                             }
 
@@ -139,8 +132,8 @@ class Uploadsection : AppCompatActivity() {
             }
         }
     }
-
-    private fun uploadFile2 (data: Uri){
+    //upload task
+    private fun uploadFile (data: Uri){
         progressBar.visibility = View.VISIBLE
         val filename = editTextFilename.getText().toString().trim()
         val sRef: StorageReference =
@@ -166,6 +159,8 @@ class Uploadsection : AppCompatActivity() {
                 progressBar.visibility = View.GONE
                 val key = databaseReference.push().getKey()!!
                 databaseReference.child(key).setValue(upload)
+
+                //store details related to uploaded file in firebase database
                 dbrefr.child("Links").child(filename).child("url").setValue(downloadUri.toString())
                 dbrefr.child("Links").child(filename).child("encryptname").setValue(key)
                 dbrefr.child("Links").child(filename).child("parent").setValue(filetitle)
@@ -176,6 +171,7 @@ class Uploadsection : AppCompatActivity() {
                 Toast.makeText(this,"Error",Toast.LENGTH_SHORT).show()
             }
         }
+        //shows progress of uploading
         uploadTask.addOnProgressListener { taskSnapshot ->
             val progress = ((100.0 * taskSnapshot.bytesTransferred) / taskSnapshot.totalByteCount).toInt()
             textViewStatus.setText("$progress % Uploading...")

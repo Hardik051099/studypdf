@@ -1,34 +1,27 @@
 package com.app.hardik.studypdf
 
 import android.app.ActionBar
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import android.text.method.TextKeyListener.clear
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
-import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_users.*
-import kotlinx.android.synthetic.main.fragment_users.view.*
 
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+
+//This Fragment gives list of All Users and their total revenue
 
 /**
  * A simple [Fragment] subclass.

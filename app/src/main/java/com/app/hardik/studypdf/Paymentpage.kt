@@ -27,6 +27,8 @@ import org.json.JSONObject
 import java.io.File
 import java.util.*
 
+//This is Payment form in which user enter his name email phone number
+//its necessary for razorpay payment page
 
 class Paymentpage : AppCompatActivity(), PaymentResultListener {
     lateinit var fname: EditText
@@ -39,7 +41,6 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
     lateinit var price: String
     lateinit var url: String
     lateinit var encryptname: String
-    lateinit var firebaseDatabase: FirebaseDatabase
     lateinit var storageRef: StorageReference
     lateinit var databaseReference: DatabaseReference
     lateinit var storage: FirebaseStorage
@@ -51,9 +52,9 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_paymentpage)
-
-
+        //preloading checkout
         Checkout.preload(getApplicationContext())
+
         fname = findViewById(R.id.fullname)
         emailadd = findViewById(R.id.email)
         phoneno = findViewById(R.id.phone)
@@ -74,12 +75,13 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
         progressDialog.setCanceledOnTouchOutside(false)
         user = userauth.currentUser
 
+
         pay.setOnClickListener {
             if (fname.text.isNullOrBlank() || emailadd.text.isNullOrBlank() || phoneno.text.isNullOrBlank()) {
                 Toast.makeText(this, "You can't leave a field empty", Toast.LENGTH_SHORT).show()
             } else {
+                //payment function
                 startPayment()
-
             }
 
         }
@@ -95,11 +97,10 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
         val co = Checkout()
 
         try {
+            //objects to be included in razorpay payment interface
             val options = JSONObject()
             options.put("name", fname.text.toString())
             options.put("description", "Transaction for PDF $pdfname \n Price :- $price")
-            //You can omit the image option to fetch the image from dashboard
-            //options.put("image","https://s3.amazonaws.com/rzp-mobile/images/rzp.png")
             options.put("currency", "INR")
             options.put("amount", price + "00")
 
@@ -127,9 +128,13 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
                 "Payment Successful \n Payment ID :- $razorpayPaymentId ",
                 Toast.LENGTH_SHORT
             ).show()
+            //generates random transaction id
             val rnds = (100..10000).random()
             val db = FirebaseDatabase.getInstance()
              val dbrefer = db.getReference()
+
+            //add transaction details in database
+
             dbrefer.child("Users").child("Students").child(user!!.uid).addValueEventListener( object:  ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
 
@@ -145,6 +150,7 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
             var day2 = ""
             dbrefer.child("Transactions").child("Transactions ID :- "+rnds.toString()).child("pdf").setValue(pdfname)
             dbrefer.child("Transactions").child("Transactions ID :- "+rnds.toString()).child("value").setValue(price)
+         //Date calculation
             val calendar: Calendar = Calendar.getInstance(TimeZone.getDefault())
             val day = calendar[Calendar.DATE]
             //Note: +1 the month for current month
@@ -173,7 +179,7 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
         }
 
     }
-
+//Downloading pdf from firebase storage
     fun downloadTask() {
         val httpsReference = storage.getReferenceFromUrl(
             url
@@ -189,11 +195,12 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
         httpsReference.getFile(localFile)
             .addOnSuccessListener(OnSuccessListener<FileDownloadTask.TaskSnapshot?> {
                 Log.e("firebase ", ";local tem file created  created $localFile")
-                //  updateDb(timestamp,localFile.toString(),position);
                 progressDialog.dismiss()
                 path = localFile.absolutePath
                 Log.i("pathh",path)
                 val intent = Intent(this,Pdfviewer::class.java)
+
+                //send all intents to pdfviewer
                 intent.putExtra("encryptname",encryptname)
                 intent.putExtra("pdfname",pdfname)
                 intent.putExtra("url",url)

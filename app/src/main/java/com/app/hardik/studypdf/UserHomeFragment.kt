@@ -116,6 +116,7 @@ class UserHomeFragment : Fragment() {
             }
 
         }
+        //pull to refresh
         val pullToRefresh: SwipeRefreshLayout = view.findViewById(R.id.pullToRefresh)
         pullToRefresh.setOnRefreshListener {
             reload()
@@ -125,6 +126,7 @@ class UserHomeFragment : Fragment() {
         // Inflate the layout for this fragment
         return view
     }
+    //listener to read whole list
     fun readlist(){
         dbrefer.child("StreamList").addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -146,6 +148,7 @@ class UserHomeFragment : Fragment() {
             }
         })
     }
+    //reload function
     fun reload () {
         val ft: FragmentTransaction = fragmentManager!!.beginTransaction()
         if (Build.VERSION.SDK_INT >= 26) {
@@ -153,6 +156,7 @@ class UserHomeFragment : Fragment() {
         }
         ft.detach(this).attach(this).commit()
     }
+    //function which can read any type of N-level hierarchical tree
     fun listreader (parent:Item,parentlist:ArrayList<RecyclerViewItem>,p0:DataSnapshot,lvl:Int) {
         val parentlist = parentlist as MutableList<Item>
         var lvl = lvl
@@ -161,9 +165,10 @@ class UserHomeFragment : Fragment() {
             var name = p0.key.toString()
             Log.i("Leaf node", name+" at level $lvl")
            var itemname =  parent.getText()
-            parent.setText("-> "+itemname)
+            parent.setText("-> "+itemname) //IMP :- This "->" and "__" is used as Indicator for detecting leaf node so DO NOT CHANGE IT (You can replace but you have replace all its occurences)
             parent.setSecondText("__")
             db = FirebaseDatabase.getInstance()
+            //listener for getting pdf count for leaf node
             db.getReference("SubjectPath").child(name).addListenerForSingleValueEvent(object : ValueEventListener{
                 override fun onCancelled(p0: DatabaseError) {
 

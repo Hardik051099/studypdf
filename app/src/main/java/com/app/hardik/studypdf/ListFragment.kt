@@ -13,14 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.multilevelview.MultiLevelRecyclerView
 import com.multilevelview.models.RecyclerViewItem
 import kotlinx.android.synthetic.main.content_list.view.*
-import org.json.JSONArray
-import org.json.JSONObject
-import java.util.logging.Level
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -34,13 +29,13 @@ private const val ARG_PARAM2 = "param2"
  * Use the [ListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-/* Apple is a class to detect which mode is On
+/* currentMode is a class to detect which mode is On
     updateClicked == 1 ; ADD Mode is On
     updateClicked == 2 ; DELETE Mode is On
-    by default its 0. this class is made public so that it can be accessed in MyAdapter.java class which
+    by default its 0. this class is made public so that it can be accessed in ListAdapter.java class which
     is an adapter for MultiLevelRecyclerList View
  */
-object Apple {
+object currentMode {
     var updateClicked : Int = 0
 }
 
@@ -54,7 +49,7 @@ class ListFragment : Fragment() {
     lateinit var dbrefer: DatabaseReference
     lateinit var db: FirebaseDatabase
     lateinit var auth: FirebaseAuth
-    lateinit var myAdapter: MyAdapter
+    lateinit var myAdapter: ListAdapter
     lateinit var Level0list: MutableList<Item> //Final list to be passed in Myadapter
     var t = 0
 
@@ -89,7 +84,7 @@ class ListFragment : Fragment() {
         item.setText("All Available Categories")
         item.setSecondText("Swipe Down to Refresh List")
         //If-Else for changing the text of Help item according to the Mode
-        if(Apple.updateClicked == 1){
+        if(currentMode.updateClicked == 1){
             //when ADD Mode is on
 
             item.setText("New +")
@@ -110,24 +105,28 @@ class ListFragment : Fragment() {
         /*
              Calling firstread function to read list from database and display in
              multiLevelRecyclerView. internal functions related multiLevelRecyclerView
-             can be found in its Adapter class file.(in this case its MyAdapter.java)
+             can be found in its Adapter class file.(in this case its ListAdapter.java)
          */
         firstread()
 
         //assiging values to adapter
-        myAdapter = MyAdapter(view.context, Level0list, multiLevelRecyclerView)
+        myAdapter = ListAdapter(
+            view.context,
+            Level0list,
+            multiLevelRecyclerView
+        )
         //assiging adapter to multiLevelRecyclerView
         multiLevelRecyclerView.adapter = myAdapter
 
         //setting onclicklistener for respective buttons for their respective modes
         view.add.setOnClickListener{
             if(t==0) {
-                Apple.updateClicked = 1
+                currentMode.updateClicked = 1
                 t=1
                 Toast.makeText(view.context,"ADD Mode is ON. Long Click on parent element to add",Toast.LENGTH_LONG).show()
             }
             else if(t==1){
-                Apple.updateClicked = 0
+                currentMode.updateClicked = 0
                 t=0
                 Toast.makeText(view.context,"ADD Mode is OFF",Toast.LENGTH_LONG).show()
             }
@@ -138,7 +137,7 @@ class ListFragment : Fragment() {
         }
         view.delete.setOnClickListener{
             if(t==0){
-                Apple.updateClicked = 2
+                currentMode.updateClicked = 2
                 t=2
                 Toast.makeText(view.context,"DELETE Mode is ON. Long Click on element to delete it!",Toast.LENGTH_LONG).show()
             }
@@ -146,7 +145,7 @@ class ListFragment : Fragment() {
                 Toast.makeText(view.context,"Disable ADD Mode First",Toast.LENGTH_LONG).show()
             }
             else if (t==2){
-                Apple.updateClicked = 0
+                currentMode.updateClicked = 0
                 t=0
                 Toast.makeText(view.context,"DELETE Mode is OFF",Toast.LENGTH_LONG).show()
 

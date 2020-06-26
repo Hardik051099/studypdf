@@ -2,15 +2,13 @@ package com.app.hardik.studypdf
 
 import android.app.ProgressDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
-import android.view.View
-import android.webkit.WebView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
@@ -24,6 +22,9 @@ import com.google.firebase.storage.ktx.storage
 import com.multilevelview.MultiLevelRecyclerView
 import com.multilevelview.models.RecyclerViewItem
 import java.io.File
+
+// This Activity displays All pdfs for selected element
+//You can click on available pdfs and you get option to buy pdf or preview pdf in demopdfviewer
 
 class Pdflist : AppCompatActivity() {
     lateinit var dbrefer: DatabaseReference
@@ -63,8 +64,8 @@ class Pdflist : AppCompatActivity() {
         item.setText("All Avaliable Pdfs for Subject $name!")
         item.setSecondText("Click to Buy or Preview")
         PdfList.add(item)
-        readlist()
 
+        readlist()
         myAdapter = Pdfadapter(applicationContext,PdfList,multiLevelRecyclerView)
         multiLevelRecyclerView.adapter = myAdapter
         multiLevelRecyclerView.setOnItemClick { view, item, position ->
@@ -72,14 +73,17 @@ class Pdflist : AppCompatActivity() {
 
             }
             else {
+                //alert dialogue which shows buy pdf , preview pdf , cancel
                 val builder = AlertDialog.Builder(this)
                 //set title for alert dialog
                 val pdf = PdfList.get(position).getText()+".pdf"
                 builder.setTitle("Buying PDF "+pdf)
                 //set message for alert dialog
+                //send all necessary data to load pdf like pdfname,price,url,encryptname of pdf to next page via intent
                 builder.setMessage("You can preview or buy this pdf")
                 builder.setPositiveButton("Buy PDF"){
                         dialogInterface, which ->
+                    //Intent is set to payment page after clicked Buy PDF
                     val intent = Intent(this,Paymentpage::class.java)
                     intent.putExtra("pdfname",PdfList.get(position).text.toString())
                     var priceof = PdfList.get(position).getSecondText().toString()
@@ -91,6 +95,8 @@ class Pdflist : AppCompatActivity() {
                     startActivity(intent)
                 }
 
+                //Intent is set to payment page after clicked Preview PDF will show demo of PDF
+                //it will open demo pdf viewer
                 builder.setNeutralButton("Preview PDF"){dialogInterface , which ->
                     demointent.putExtra("pdfname2",PdfList.get(position).text.toString())
                     Log.i("pdfname2 list",PdfList.get(position).text.toString())
@@ -118,6 +124,7 @@ class Pdflist : AppCompatActivity() {
     }
 
     fun readlist(){
+        //it reads all the pdfs available for leaf nodes and shows in list view
         dbrefer.child("Uploads").child(path).addChildEventListener(object : ChildEventListener{
             override fun onCancelled(p0: DatabaseError) {
 
@@ -144,11 +151,13 @@ class Pdflist : AppCompatActivity() {
         })
 
     }
+
+    //Download pdf function and store in hidden folder in user storage
     fun downloadTask() {
         val httpsReference = storage.getReferenceFromUrl(
             url
         )
-        val rootPath =
+        val rootPath = //.rha folder will be hidden from user
             File(Environment.getExternalStorageDirectory(), ".rha/"+keyMap.get(PdfList.get(position).text.toString()))
         val localFile = File(rootPath, "demo.pdf")
 

@@ -8,12 +8,11 @@ import android.view.WindowManager
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.github.barteksc.pdfviewer.PDFView
-import com.google.android.material.resources.TextAppearance
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import org.w3c.dom.Text
 import java.io.File
 
+//PDFViewer displays the pdf on screen its an inbuilt pdfviewer in our app
 
 class Pdfviewer : AppCompatActivity() {
 
@@ -24,6 +23,7 @@ class Pdfviewer : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //this prevents user from any type of screen capture
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         setContentView(R.layout.activity_pdfviewer)
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
@@ -35,6 +35,7 @@ class Pdfviewer : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         val uid = auth.currentUser!!.uid
         var watermark = " "
+        //listener to get username and email of user for watermark
         databaseReference.child("Users").child("Students").child(uid).addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
 
@@ -45,8 +46,10 @@ class Pdfviewer : AppCompatActivity() {
             }
 
         })
+        //create file
         val yourFile = File(path)
         Log.i("bingo",yourFile.toString())
+        //pdfviewer function
         pdfView.fromFile(yourFile)
             .onDrawAll { canvas, pageWidth, pageHeight, displayedPage ->
                 val paint = Paint()

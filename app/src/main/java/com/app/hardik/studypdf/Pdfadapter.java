@@ -1,8 +1,6 @@
 package com.app.hardik.studypdf;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,17 +9,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+
 import com.multilevelview.MultiLevelAdapter;
 import com.multilevelview.MultiLevelRecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
+//This PDF Adapter is for list view of pdfs in Pdflist and MyPdfFragment
 
 public class Pdfadapter extends MultiLevelAdapter {
 

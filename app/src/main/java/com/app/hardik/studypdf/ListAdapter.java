@@ -29,7 +29,7 @@ import java.util.List;
 
 //This is Adapter for MultiLevelRecyclerView of ListFragment
 
-public class MyAdapter extends MultiLevelAdapter {
+public class ListAdapter extends MultiLevelAdapter {
     private Holder mViewHolder;
     private Context mContext;
     private List<Item> mListItems = new ArrayList<>();
@@ -40,7 +40,7 @@ public class MyAdapter extends MultiLevelAdapter {
 
 
 
-    MyAdapter(Context mContext, List<Item> mListItems, MultiLevelRecyclerView mMultiLevelRecyclerView) {
+    ListAdapter(Context mContext, List<Item> mListItems, MultiLevelRecyclerView mMultiLevelRecyclerView) {
         super(mListItems);
         this.mListItems = mListItems;
         this.mContext = mContext;
@@ -66,7 +66,7 @@ public class MyAdapter extends MultiLevelAdapter {
         mItem = mListItems.get(position);
 
         //Changing Color range of all items according to the mode
-        if(Apple.INSTANCE.getUpdateClicked() == 1) {
+        if(currentMode.INSTANCE.getUpdateClicked() == 1) {
             //ADD Mode :- Blue color range
             switch (getItemViewType(position)%4) {
                 case 0:
@@ -87,7 +87,7 @@ public class MyAdapter extends MultiLevelAdapter {
             }
 
         }
-        else if (Apple.INSTANCE.getUpdateClicked() == 0){
+        else if (currentMode.INSTANCE.getUpdateClicked() == 0){
             //Default mode
             switch (getItemViewType(position)%4) {
                 case 0:
@@ -107,7 +107,7 @@ public class MyAdapter extends MultiLevelAdapter {
                     break;
             }
         }
-        else if (Apple.INSTANCE.getUpdateClicked() == 2){
+        else if (currentMode.INSTANCE.getUpdateClicked() == 2){
             //DELETE Mode :- Red color range
             switch (getItemViewType(position)%4) {
                 case 0:
@@ -129,10 +129,10 @@ public class MyAdapter extends MultiLevelAdapter {
         }
 
         mViewHolder.mTitle.setText(mItem.getText());
-        if(Apple.INSTANCE.getUpdateClicked() == 1){
+        if(currentMode.INSTANCE.getUpdateClicked() == 1){
             mViewHolder.mSubtitle.setText("Long Click here to add New Element");
         }
-        else if (Apple.INSTANCE.getUpdateClicked() == 2){
+        else if (currentMode.INSTANCE.getUpdateClicked() == 2){
             if(mItem.text.equals("All Available Categories")){
 
             }
@@ -258,7 +258,7 @@ public class MyAdapter extends MultiLevelAdapter {
 
                     final String finalPath = path;
 
-                    if(Apple.INSTANCE.getUpdateClicked() == 2) {
+                    if(currentMode.INSTANCE.getUpdateClicked() == 2) {
                         //Toast.makeText(mContext, String.format(Locale.ENGLISH, "Item at position %d was LONG clicked!", getAdapterPosition()), Toast.LENGTH_LONG).show();
 
                         //setting alert dilogue for delete mode
@@ -288,7 +288,7 @@ public class MyAdapter extends MultiLevelAdapter {
 
 
                     }
-                    else if (Apple.INSTANCE.getUpdateClicked() == 1){
+                    else if (currentMode.INSTANCE.getUpdateClicked() == 1){
                         final String finalPath2 = path+"/";
 
                        //alert dilogue for adding element in database

@@ -28,7 +28,7 @@
         <activity android:name=".ExpandCard" />
         <activity android:name=".AddIntoList" />
         <activity android:name=".Admindashboard" />
-        <activity android:name=".userdashboard" />
+        <activity android:name=".Userdashboard" />
         <activity android:name=".SignUp" />
         <activity android:name=".Introscreen" />
         <activity android:name=".LoginPage" />

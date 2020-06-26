@@ -3,19 +3,20 @@ package com.app.hardik.studypdf
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import androidx.fragment.app.Fragment
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+
+
+//This fragment is for admin panel where admin can access block user , pdf cost change , delete pdf and sign out
+
 
 /**
  * A simple [Fragment] subclass.
@@ -54,7 +55,7 @@ class SettingFragment : Fragment() {
         delete = view.findViewById(R.id.delete)
         cost = view.findViewById(R.id.changecost)
 
-
+        //Intents to move to the page after clicking Respective buttons
         logout.setOnClickListener {
             activity!!.getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit()
                 .putBoolean("isLoggedin", false).apply()

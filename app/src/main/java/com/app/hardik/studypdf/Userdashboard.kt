@@ -1,21 +1,12 @@
 package com.app.hardik.studypdf
 
-import android.Manifest
-import android.app.Activity
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,7 +14,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 
-class userdashboard : AppCompatActivity() {
+//This Activity is for UserDashboard , it has not much use only to hold and display fragments
+
+class Userdashboard : AppCompatActivity() {
     lateinit var database: FirebaseDatabase
     lateinit var databaseReference: DatabaseReference
     lateinit var userauth : FirebaseAuth
@@ -42,6 +35,7 @@ class userdashboard : AppCompatActivity() {
         databaseReference = database.getReference()
         userauth = FirebaseAuth.getInstance()
         user = userauth.currentUser
+        //listener to get current users name
         databaseReference.child("Users").child("Students").child(user!!.uid).child("Username").addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
             }
@@ -51,20 +45,21 @@ class userdashboard : AppCompatActivity() {
                 helloname.text ="Welcome " + name
             }
         })
-
+        //Initializing Navigation bar items
         bottomNavigation = findViewById(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
         helloname.visibility = View.GONE
         openFragment(UserHomeFragment.newInstance("", ""))
 
     }
-
+    //This function opens fragments
     fun openFragment(fragment: Fragment) {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
     }
+    //Navigation bar listener
     var navigationItemSelectedListener: BottomNavigationView.OnNavigationItemSelectedListener? =
         object : BottomNavigationView.OnNavigationItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -106,6 +101,7 @@ class userdashboard : AppCompatActivity() {
             Handler().postDelayed(Runnable { exit = false }, 3 * 1000)
         }
     }
+    //function to set Home icon checked by default
     internal fun BottomNavigationView.checkItem(actionId: Int) {
         menu.findItem(actionId)?.isChecked = true
     }

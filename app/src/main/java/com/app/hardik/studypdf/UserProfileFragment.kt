@@ -3,7 +3,6 @@ package com.app.hardik.studypdf
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -11,17 +10,19 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_user_profile.*
 import kotlinx.android.synthetic.main.fragment_user_profile.view.*
-import kotlinx.android.synthetic.main.fragment_user_profile.view.EducationEditText
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+
+//This Fragment Shows the Current User's profile details , also signout option is present here
 
 /**
  * A simple [Fragment] subclass.
@@ -40,7 +41,6 @@ class UserProfileFragment : Fragment() {
     lateinit var education_value : String
     lateinit var logout : Button
     private lateinit var spinner: ProgressBar
-    lateinit var nav_menu: Menu
 
     var user : FirebaseUser? = null
     // TODO: Rename and change types of parameters

@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +34,8 @@ import java.io.File
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
+//This Fragment gives List of All PDFs Bought by user it also works offline
+
 /**
  * A simple [Fragment] subclass.
  * Use the [MyPdfFragment.newInstance] factory method to
@@ -50,14 +51,12 @@ class MyPdfFragment : Fragment() {
     lateinit var myAdapter: Pdfadapter
     lateinit var Pdfs: MutableList<Item>
     lateinit var pdflistsharedlist: MutableList<Item>
-    lateinit var pdflistname: TextView
     lateinit var storage: FirebaseStorage
     lateinit var progressDialog: ProgressDialog
     lateinit var storageRef: StorageReference
     lateinit var path : String
     val mapKey = "map"
     var pdflist = mutableListOf<Any>()
-    var urlshared: String = ""
     var encryptnameshared : String = ""
     var pdflistshare = mutableListOf<Any>()
     var usernames = mutableListOf<Any>()     //List of usernames from transaction
@@ -70,6 +69,7 @@ class MyPdfFragment : Fragment() {
     var keyMap = hashMapOf<String,String>()
     var pdfname = ""
     var pdflistshared : MutableList<String> = ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -82,11 +82,13 @@ class MyPdfFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val view =  inflater.inflate(R.layout.fragment_my_pdf, container, false)
         val multiLevelRecyclerView = view.findViewById(R.id.rv_list) as MultiLevelRecyclerView
         multiLevelRecyclerView.layoutManager = LinearLayoutManager(view.context)
-        //Default Element to include
         Pdfs = ArrayList<RecyclerViewItem>() as MutableList<Item>
+
+        //Storing pdf list in shared prefereance list to access it while offline
         pdflistsharedlist = ArrayList<RecyclerViewItem>() as MutableList<Item>
         db = FirebaseDatabase.getInstance()
         dbrefer = db.getReference()
@@ -97,14 +99,19 @@ class MyPdfFragment : Fragment() {
         progressDialog = ProgressDialog(view.context)
         progressDialog.setTitle("Loading PDF...")
         progressDialog.setCanceledOnTouchOutside(false)
+
+        //get list from  shared preference
         var pdflistsave = activity!!.getSharedPreferences("pdflist",Context.MODE_PRIVATE).getStringSet("pdflistsave",null)
-//        Log.i("sharedpref",pdflistsave.toString())
         if (pdflistsave.isNullOrEmpty()){
+            //if Empty
             val mutableSet : MutableSet<String> = mutableSetOf()
             mutableSet.add("NO PDFS FOUND")
             pdflistsave = mutableSet
         }
+
         pdflistshared  = pdflistsave.toMutableList()
+
+        //get username of current user
         dbrefer.child("Users").child("Students").child(user!!.uid).addListenerForSingleValueEvent(object: ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
 
@@ -117,24 +124,34 @@ class MyPdfFragment : Fragment() {
 
         })
 
+        //Default item to include
         var item = Item(0)
         item.setText("Your Saved PDFs")
         item.setSecondText("Click to Open!")
         Pdfs.add(item)
+        //read list
         readlist()
+        //check if user is online and according to it load list
         if(isOnline(view.context)) {
             myAdapter = Pdfadapter(view.context, Pdfs, multiLevelRecyclerView)
             multiLevelRecyclerView.adapter = myAdapter
         }
         else {
+            //in case of offline , turlmap which is collection of url of each pdf
+            //keymap is collection of encryptname of each pdf
+            //both of them are loaded from shared preferences
+
             urlMap = loadUrl()
             keyMap = loadKey()
+
+            //this filters the pdfs from pdf list which only shows the pdfs bought by user
             for(i in pdflistsave) {
                 var item = Item(0)
                 item.setText(i.toString())
                 pdflistsharedlist.add(item)
             }
             Log.i("sharedpref2",pdflistsharedlist.toString())
+            //handler to cause delay
             Handler().postDelayed({
                 Log.i("sharedpref3",pdflistsharedlist.toString())
                 myAdapter = Pdfadapter(view.context, pdflistsharedlist , multiLevelRecyclerView)
@@ -144,6 +161,9 @@ class MyPdfFragment : Fragment() {
         }
 
         multiLevelRecyclerView.setOnItemClick { view, item, position ->
+            //Click on pdf to open it
+            //Load file from internal storage and show it in pdfviewer
+            //in case if file is missing then download it
             if(isOnline(view.context)) {
                 if (Pdfs.get(position).getSecondText().equals("Click to Open!")) {
 
@@ -172,6 +192,7 @@ class MyPdfFragment : Fragment() {
             }
 
         }
+        //this listener to store urls and encrypted name of each pdf in their respected hashmaps
         dbrefer.child("Links").addChildEventListener(object : ChildEventListener{
             override fun onCancelled(p0: DatabaseError) {
 
@@ -219,7 +240,7 @@ class MyPdfFragment : Fragment() {
             }
     }
 
-
+//this function is used to download file
     fun downloadTask() {
         val httpsReference = storage.getReferenceFromUrl(
             url
@@ -264,6 +285,8 @@ class MyPdfFragment : Fragment() {
                 )
             }
     }
+
+    //This function reads all pdfs and also filters according to user
     fun readlist () {
         dbrefer.child("Transactions").addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
@@ -303,35 +326,8 @@ class MyPdfFragment : Fragment() {
 
     }
 
+    //This function is used to read url and encryptname
     fun readurl(){
-        /*
-        dbrefer.child("Uploads").child(path).addChildEventListener(object : ChildEventListener{
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-                val name = p0.child("name").value.toString()
-                val url = p0.child("url").value.toString()
-                val key = p0.key.toString()
-                Log.i("nameurlkey",name+" "+url+" "+key)
-                urlMap.put(name,url)
-                keyMap.put(name,key)
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot) {
-                TODO("Not yet implemented")
-            }
-
-        })*/
 
         dbrefer.child("Links").child(pdfname).addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
@@ -346,6 +342,8 @@ class MyPdfFragment : Fragment() {
 
         })
     }
+
+    //Mapping function
     private fun urlMapfun(inputMap: HashMap<String, String>) {
         val pSharedPref: SharedPreferences = activity!!.applicationContext.getSharedPreferences(
             "url",
@@ -360,6 +358,8 @@ class MyPdfFragment : Fragment() {
             editor.commit()
         }
     }
+
+    //Mapping function
     private fun keyMapfun(inputMap: HashMap<String, String>) {
         val pSharedPref: SharedPreferences = activity!!.applicationContext.getSharedPreferences(
             "encryptname",
@@ -374,6 +374,8 @@ class MyPdfFragment : Fragment() {
             editor.commit()
         }
     }
+
+    //storing urlmap in sharedpreferences
     private fun loadUrl(): HashMap<String, String> {
         var outputMap: HashMap<String, String> = HashMap()
         val pSharedPref: SharedPreferences = activity!!.applicationContext.getSharedPreferences(
@@ -397,6 +399,8 @@ class MyPdfFragment : Fragment() {
         }
         return outputMap
     }
+
+    //storing keymap in sharedpreferences
     private fun loadKey(): HashMap<String, String> {
         var outputMap: HashMap<String, String> = HashMap()
         val pSharedPref: SharedPreferences = activity!!.applicationContext.getSharedPreferences(

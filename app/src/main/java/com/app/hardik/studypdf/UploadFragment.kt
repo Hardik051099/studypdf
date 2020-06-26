@@ -6,12 +6,12 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -19,8 +19,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.multilevelview.MultiLevelRecyclerView
 import com.multilevelview.models.RecyclerViewItem
-import kotlinx.android.synthetic.main.activity_uploadsection.view.*
-import kotlinx.android.synthetic.main.fragment_upload.*
 import kotlinx.android.synthetic.main.fragment_upload.view.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -31,6 +29,10 @@ private const val ARG_PARAM2 = "param2"
 /* Everything Related to MultiRecyclerview (Comments stuff) can be found in ListFragment.kt file
 as the code related to it is exactly same
 * */
+
+//This Fragment shows N level hierarchical Database tree similar to ListFragment.kt
+//You can select leaf node and Press Upload button for further upload procedure
+
 
 //Global function to be used in both UploadFragment and UploadAdapter
 object activate {
@@ -98,6 +100,8 @@ class UploadFragment : Fragment() {
         readlist()
         myAdapter = UploadAdapter(view.context, Level0list, multiLevelRecyclerView,UploadFragment())
         multiLevelRecyclerView.adapter = myAdapter
+
+            //pull to refresh
         val pullToRefresh: SwipeRefreshLayout = view.findViewById(R.id.pullToRefresh)
         pullToRefresh.setOnRefreshListener {
             reload()

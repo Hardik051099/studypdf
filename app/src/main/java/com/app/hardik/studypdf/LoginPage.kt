@@ -7,8 +7,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.text.SpannableString
-import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -24,7 +22,6 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import java.time.LocalDate
 import java.util.*
 
 //Login page for user to get logged in our app
@@ -125,7 +122,7 @@ class LoginPage : AppCompatActivity() {
     }
 
 
-
+//Login function ,automatically authenticated by firebase
     fun loginAccount (email:String,password:String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
@@ -165,6 +162,10 @@ class LoginPage : AppCompatActivity() {
                 // ...
             }
     }
+
+    //Display Admin or User panel according to logged in user's Role id
+    //1 for User, 2 for admin
+    //Also stores Information about total sessions
     fun onAuthSuccess(user: FirebaseUser) {
         databaseRef.child(user.uid).addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
@@ -195,7 +196,7 @@ class LoginPage : AppCompatActivity() {
                         databaseRef.child(user.uid).child("ChangedYear").setValue(currentyear)
                         getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putBoolean("isLoggedin", true).apply()
                         getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putString("Flag", flag).apply()
-                        startActivity(Intent(this@LoginPage, userdashboard::class.java))
+                        startActivity(Intent(this@LoginPage, Userdashboard::class.java))
                         finish()
                     }
                     //If month is same then check year
@@ -205,7 +206,7 @@ class LoginPage : AppCompatActivity() {
                         databaseRef.child(user.uid).child("ChangedYear").setValue(currentyear)
                         getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putBoolean("isLoggedin", true).apply()
                         getSharedPreferences("Loggedin", Context.MODE_PRIVATE).edit().putString("Flag", flag).apply()
-                        startActivity(Intent(this@LoginPage, userdashboard::class.java))
+                        startActivity(Intent(this@LoginPage, Userdashboard::class.java))
                         finish()
                     }
                     else if (loggedindevice == "3"){
@@ -222,17 +223,17 @@ class LoginPage : AppCompatActivity() {
                     }
                     else if (loggedindevice == "0"){
                         databaseRef.child(user.uid).child("LoggedInDevice").setValue("1")
-                        startActivity(Intent(this@LoginPage, userdashboard::class.java))
+                        startActivity(Intent(this@LoginPage, Userdashboard::class.java))
                         finish()
                     }
                     else if (loggedindevice == "1"){
                         databaseRef.child(user.uid).child("LoggedInDevice").setValue("2")
-                        startActivity(Intent(this@LoginPage, userdashboard::class.java))
+                        startActivity(Intent(this@LoginPage, Userdashboard::class.java))
                         finish()
                     }
                     else if (loggedindevice == "2"){
                         databaseRef.child(user.uid).child("LoggedInDevice").setValue("3")
-                        startActivity(Intent(this@LoginPage, userdashboard::class.java))
+                        startActivity(Intent(this@LoginPage, Userdashboard::class.java))
                         finish()
                     }
                 }
@@ -244,10 +245,12 @@ class LoginPage : AppCompatActivity() {
         })
 
     }
+    //move to signup
     fun newuser (v: View){
         startActivity(Intent(this,SignUp::class.java))
         finish()
     }
+
     fun Login (v: View){
         if (emailtext.text.isNullOrEmpty() || passwordtext.text.isNullOrEmpty())
         {

@@ -21,6 +21,9 @@ import com.google.firebase.database.*
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
+//This page is used to search pdf , it also shows pdf's details
+
+
 /**
  * A simple [Fragment] subclass.
  * Use the [SearchFragment.newInstance] factory method to
@@ -164,6 +167,7 @@ class SearchFragment : Fragment() {
                 }
 
             })
+            //Clicking on any pdf will take it to Pdflist page
             searchlist.setOnItemClickListener(object : AdapterView.OnItemClickListener {
                 override fun onItemClick(
                     arg0: AdapterView<*>?,
@@ -223,6 +227,7 @@ class SearchFragment : Fragment() {
             }
     }
 
+//function to hide keyboard after clicking anywhere else
     fun View.hideKeyboard() {
         val inputMethodManager =
             context!!.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as? InputMethodManager

@@ -1,5 +1,7 @@
 package com.app.hardik.studypdf;
 
+//Model Class for storing information of Uploaded Pdf
+
 public class Upload {
     public String name;
     public String url;

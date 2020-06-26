@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                     if (isLoggedin){
                         if (isOnline(this@MainActivity)){
                             if (flag == "1"){
-                                startActivity(Intent(this@MainActivity,userdashboard::class.java))
+                                startActivity(Intent(this@MainActivity,Userdashboard::class.java))
                                 finish()
                             }
                             else if (flag == "2"){
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         else{
                             if (flag == "1"){
-                                startActivity(Intent(this@MainActivity,userdashboard::class.java))
+                                startActivity(Intent(this@MainActivity,Userdashboard::class.java))
                                 finish()
                             }
                             else if (flag == "2"){

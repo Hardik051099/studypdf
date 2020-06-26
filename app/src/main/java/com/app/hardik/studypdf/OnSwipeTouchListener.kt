@@ -5,6 +5,8 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 
+//This class for listening swipelisteners on onboarding screen
+
 open class OnSwipeTouchListener(ctx: Context) : View.OnTouchListener {
 
     private val gestureDetector: GestureDetector

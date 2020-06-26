@@ -1,23 +1,22 @@
 package com.app.hardik.studypdf
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
 import java.util.*
+
+//Sign up page to register in our app
 
 class SignUp : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -77,6 +76,7 @@ class SignUp : AppCompatActivity() {
 
     }
 
+    //Creates authenticated account in firebase
     fun createAccount(email: String, password: String, name: String, flag: Int) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
@@ -111,7 +111,7 @@ class SignUp : AppCompatActivity() {
             }
 
     }
-
+        //add user details in Users and Auth firebase tree
     fun onAuthSuccess(user: FirebaseUser, name: String, flag: Int) {
             if(flag == 1){
                 databaseRef.child("Users").child("Students").child(user.uid).child("Username").setValue(name)
@@ -124,7 +124,7 @@ class SignUp : AppCompatActivity() {
                 databaseRef.child("Auth").child("AllUsers").child(user.uid).child("ChangedMonth").setValue(currentmonth)
                 databaseRef.child("Auth").child("AllUsers").child(user.uid).child("ChangedYear").setValue(currentyear)
 
-                startActivity(Intent(this,userdashboard::class.java))
+                startActivity(Intent(this,Userdashboard::class.java))
                 finish()
             }
         else if(flag == 2) {
@@ -139,12 +139,12 @@ class SignUp : AppCompatActivity() {
             }
 
     }
-
+//move to login
     fun olduser(v: View) {
         startActivity(Intent(this, LoginPage::class.java))
         finish()
     }
-
+//signup function for student
     fun Signupstd(v: View) {
         val flag = 1
         if (emailtext.text.isNullOrEmpty() || passwordtext.text.isNullOrEmpty() || confpasstext.text.isNullOrEmpty() || nametext.text.isNullOrEmpty() || phonenotext.text.isNullOrEmpty()) {
@@ -161,7 +161,9 @@ class SignUp : AppCompatActivity() {
             createAccount(email, password, name, flag)
         }
     }
-        fun Signupadm(v: View) {
+
+    //signup function for admin (Currently moved to diffrent app)
+    fun Signupadm(v: View) {
             val flag = 2
 
             if (emailtext.text.isNullOrEmpty() || passwordtext.text.isNullOrEmpty() || confpasstext.text.isNullOrEmpty() || nametext.text.isNullOrEmpty()) {
