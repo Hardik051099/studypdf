@@ -36,7 +36,7 @@ class Introscreen : AppCompatActivity() {
         animl = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.to_left)
         animr = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.to_right)
 
-        //function for changing images and texts
+        //function for animate images and texts
         fun leftanim(){
             //Trigger Left Animation
             welcomeimg.startAnimation(animl)
@@ -49,6 +49,7 @@ class Introscreen : AppCompatActivity() {
             welcometxt.startAnimation(animr)
             return
         }
+        //function to change images and texts according to seekbar progress
         fun change(){
             if (seek.progress == 0){
                 welcomeimg.setImageResource(R.drawable.intro2)
@@ -141,6 +142,7 @@ class Introscreen : AppCompatActivity() {
             gotologin()
         }
 
+        //Adding gestures to this activity
         welcomeimg.setOnTouchListener(object : OnSwipeTouchListener(this@Introscreen) {
             override fun onSwipeLeft() {
                 super.onSwipeLeft()

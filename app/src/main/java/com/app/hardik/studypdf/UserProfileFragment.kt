@@ -14,8 +14,7 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.fragment_user_profile.*
-import kotlinx.android.synthetic.main.fragment_user_profile.view.*
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -109,8 +108,8 @@ class UserProfileFragment : Fragment() {
                 else{
                     education_edittext.visibility = View.VISIBLE
                     spinner.visibility = View.GONE
-                    view.EducationEditText.setOnEditorActionListener { v, actionId, event ->
-                        if(actionId == EditorInfo.IME_ACTION_DONE && EducationEditText.text.isNullOrEmpty() == false){              //If Enter is clicked and the field is not empty
+                    education_edittext.setOnEditorActionListener { v, actionId, event ->
+                        if(actionId == EditorInfo.IME_ACTION_DONE && !education_edittext.text.isNullOrEmpty()){              //If Enter is clicked and the field is not empty
                             education_edittext.visibility = View.GONE
                             education_textview.visibility = View.VISIBLE
 

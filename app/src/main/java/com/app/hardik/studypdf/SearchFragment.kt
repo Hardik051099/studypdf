@@ -72,6 +72,7 @@ class SearchFragment : Fragment() {
         //Fetching subjects and paths from database
         database = FirebaseDatabase.getInstance()
         databaseReference = database.getReference()
+        //Get data from databse
         databaseReference.child("SubjectPath").addValueEventListener(object :
             ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -79,10 +80,10 @@ class SearchFragment : Fragment() {
             override fun onDataChange(p0: DataSnapshot) {
                 //Saves usernames in menu list
                 p0.children.mapNotNullTo(subpath) {
-                    it.value.toString()
+                    it.value.toString()     //Path of subject
                 }
                 p0.children.mapNotNullTo(subkey){
-                    it.key
+                    it.key                  //Value of subject
                 }
             }
         })
@@ -94,7 +95,7 @@ class SearchFragment : Fragment() {
         anim_translate_top = AnimationUtils.loadAnimation(view.context,R.anim.translate_top)
         anim_fade_out = AnimationUtils.loadAnimation(view.context, R.anim.fade_out)
 
-
+        //Initializing list view
         tempsublist = subpath
         myAdapter = ArrayAdapter(
             view.context,
@@ -145,11 +146,13 @@ class SearchFragment : Fragment() {
                             name = newText
                             Log.d("NAME", name)
                             if (newlist()){
+                                //If found something then show templist
                                 myAdapter = ArrayAdapter(
                                     view.context,
                                     android.R.layout.simple_list_item_1, tempsublist
                                 )
                                 if (tempsublist.isEmpty()){
+                                    //Else show 'Not Found'
                                     tempsublist.add(0, " '" + name+ "' " + " Not Found")
                                 }
                                 searchlist.adapter = myAdapter
@@ -234,6 +237,8 @@ class SearchFragment : Fragment() {
         inputMethodManager?.hideSoftInputFromWindow(this.windowToken, 0)
     }
 
+    //If Entered string is found in the list of subject path then return true store that subject path in templist
+    //Else templist will be empty
     fun newlist(): Boolean {
         c = 0
         newsublist.clear()

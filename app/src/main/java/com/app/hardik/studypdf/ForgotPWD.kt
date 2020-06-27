@@ -34,7 +34,7 @@ class ForgotPWD : AppCompatActivity() {
             override fun onCancelled(p0: DatabaseError) {
             }
             override fun onDataChange(p0: DataSnapshot) {
-                //Saves emails in email list
+                //Saves all registered emails in email list
                 p0.children.forEach {
                     Log.d("Emails",it.toString())
                     it.children.mapNotNullTo(emaillist) {
@@ -44,6 +44,7 @@ class ForgotPWD : AppCompatActivity() {
             }
         })
 
+        //Sends email to change passworf
         fsend.setOnClickListener {
             if(femail.text.isNullOrEmpty()){
                 Toast.makeText(this@ForgotPWD,"You can't leave this field Empty !",Toast.LENGTH_SHORT).show()
@@ -53,6 +54,8 @@ class ForgotPWD : AppCompatActivity() {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Toast.makeText(this@ForgotPWD,"Email Sent Successfully",Toast.LENGTH_SHORT).show()
+
+                            //Opens email app
                             Handler().postDelayed(Runnable {
                                 val intent =
                                     packageManager.getLaunchIntentForPackage("com.google.android.gm")
@@ -61,6 +64,7 @@ class ForgotPWD : AppCompatActivity() {
                             }, 2000)
                         }
                         else {
+                            //If unsuccessful to send email then Check if the email is registered or not
                             var notregister = true
                             for (i in emaillist){
                                 if (i.toString() == femail.text.toString()){ notregister == false}

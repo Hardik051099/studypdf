@@ -10,10 +10,11 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_users.*
+
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -35,6 +36,7 @@ class UsersFragment : Fragment() {
     lateinit var emails: String
     lateinit var revenue: String
     lateinit var nav_menu: Menu
+    lateinit var root2:LinearLayout
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -53,7 +55,9 @@ class UsersFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view: View = inflater!!.inflate(R.layout.fragment_users, container, false)
+        root2 = view.findViewById(R.id.root2)
 
+        //Hide navigation menu untill it loads all cards
         nav_menu = bottomNavigation.menu
         nav_menu.findItem(R.id.navigation_settings).setVisible(false)
         nav_menu.findItem(R.id.navigation_upload).setVisible(false)

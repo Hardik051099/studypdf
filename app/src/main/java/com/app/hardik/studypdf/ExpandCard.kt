@@ -34,6 +34,8 @@ class ExpandCard : AppCompatActivity() {
             var pdfname: String
             var pdfcost: String
             var count: Int = 0
+
+            //Check name of the user in the list of username to get other informations of the user
         while ( costnamefirst <= costnamelast ){
             if (costname.get(costnamefirst) == Username.text)
             {

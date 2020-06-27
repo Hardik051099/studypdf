@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -19,7 +20,6 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.fragment_home.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -75,6 +75,7 @@ class HomeFragment : Fragment() {
     var sorteddates = listOf<Any>()
 
     private lateinit var spinner: ProgressBar
+    lateinit var transactions: LinearLayout
 
     lateinit var nav_menu: Menu
 
@@ -98,10 +99,11 @@ class HomeFragment : Fragment() {
 
         //spinner
         spinner = view.findViewById(R.id.progressBar1)
+        transactions= view.findViewById(R.id.transactions)
         spinner.visibility = View.VISIBLE
         nav_menu = bottomNavigation.menu
 
-
+        //Set navigation bar invisible until it loads all data from firebase
         nav_menu.findItem(R.id.navigation_settings).setVisible(false)
         nav_menu.findItem(R.id.navigation_upload).setVisible(false)
         nav_menu.findItem(R.id.navigation_home).setVisible(false)
@@ -121,6 +123,7 @@ class HomeFragment : Fragment() {
             Log.i("Empty","True")
         }
         else{
+            //clear all lists if it is not empty
             menu.clear()
             email.clear()
             costs.clear()
@@ -154,6 +157,7 @@ class HomeFragment : Fragment() {
                     it.child("Email").value
                 }
                 if(p0.exists()){
+                    //show count of users
                     userstats.name =  p0.childrenCount.toString()
 
                 }
@@ -186,6 +190,7 @@ class HomeFragment : Fragment() {
                     it.child("date").value
                 }
                 if(p0.exists()){
+                    //show count of downloads
                     downloadstats.name = p0.childrenCount.toString()
 
                 }
@@ -213,7 +218,7 @@ class HomeFragment : Fragment() {
                     cost = 0
                     count += 1
                 }
-
+                //show total revenue
                 revenuestats.name = Total_revenue.toString()
                 revenuestats.image_drawable = R.drawable.rupees2
                 imageModelArrayList.add(revenuestats)
@@ -239,7 +244,7 @@ class HomeFragment : Fragment() {
                     Log.i("newdate",new)
                     dateMap.put(i.toString(),new)
                 }
-
+                //Sort all lists according to the sorted dates
                 count = sorteddates.indexOfFirst { true }
                 last  = sorteddates.indexOfLast { true }
                 index = date.indexOfFirst { true }
@@ -281,7 +286,7 @@ class HomeFragment : Fragment() {
             val handler = Handler()
             handler.postDelayed(object : Runnable {
                 override fun run() {
-                    //Call your function here
+                    //If the loading and sorting of data is done then show card view
                     if (Done == true){
                         Log.d("Menu after done", menu.toString())
                         count = costname.indexOfFirst { true }
@@ -299,6 +304,8 @@ class HomeFragment : Fragment() {
                         }
 
                         spinner.visibility = View.GONE
+
+                        //Set navigation bar visible
                         nav_menu = bottomNavigation.menu
                         nav_menu.findItem(R.id.navigation_settings).setVisible(true)
                         nav_menu.findItem(R.id.navigation_upload).setVisible(true)
@@ -314,6 +321,7 @@ class HomeFragment : Fragment() {
 
         }
         else{
+            //Set navigation bar visible
             spinner.visibility = View.GONE
             nav_menu = bottomNavigation.menu
             nav_menu.findItem(R.id.navigation_settings).setVisible(true)
@@ -348,17 +356,10 @@ class HomeFragment : Fragment() {
             }
     }
 
-    fun reload () {
-        val ft: FragmentTransaction = fragmentManager!!.beginTransaction()
-        if (Build.VERSION.SDK_INT >= 26) {
-            ft.setReorderingAllowed(false)
-        }
-        ft.detach(this).attach(this).commit()
-    }
 
     fun newdatecard() {
 
-        // Initialize a new CardView instance
+        // Initialize a new CardView instance for dates
         val card_view2 = CardView(view!!.context)
 
         // Initialize a new LayoutParams instance, CardView width and height
@@ -398,7 +399,7 @@ class HomeFragment : Fragment() {
     }
 
     fun new() {
-        // Initialize a new CardView instance
+        // Initialize a new CardView instance for user info
         val card_view = CardView(view!!.context)
         card_view.id = count
 
