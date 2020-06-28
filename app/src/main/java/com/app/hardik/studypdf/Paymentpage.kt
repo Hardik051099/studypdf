@@ -129,12 +129,11 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
                 Toast.LENGTH_SHORT
             ).show()
             //generates random transaction id
-            val rnds = (100..10000).random()
+            var rnds = (100..100000).random()
             val db = FirebaseDatabase.getInstance()
              val dbrefer = db.getReference()
 
-            //add transaction details in database
-
+            //get username of current user
             dbrefer.child("Users").child("Students").child(user!!.uid).addValueEventListener( object:  ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
 
@@ -142,7 +141,33 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
 
                 override fun onDataChange(p0: DataSnapshot) {
                     name = p0.child("Username").value.toString()
-                    dbrefer.child("Transactions").child("Transactions ID :- "+rnds.toString()).child("name").setValue(name)
+                    //to check for same transaction id
+                    dbrefer.child("Transactions").addChildEventListener(object : ChildEventListener{
+                        override fun onCancelled(p0: DatabaseError) {
+
+                        }
+
+                        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                        }
+
+                        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                        }
+
+                        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                            if (p0.hasChild("Transactions ID :- "+rnds.toString())){
+                                rnds = (100..100000).random()
+                                dbrefer.child("Transactions").child("Transactions ID :- "+rnds.toString()).child("name").setValue(name)
+                            }
+                            else {
+                                //add transaction details in database
+                                dbrefer.child("Transactions").child("Transactions ID :- "+rnds.toString()).child("name").setValue(name)
+                            }
+                        }
+
+                        override fun onChildRemoved(p0: DataSnapshot) {
+                        }
+
+                    })
                 }
 
             })
@@ -223,7 +248,6 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
                 )
             }
     }
-
 
 
 }

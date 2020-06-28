@@ -51,7 +51,7 @@
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:layout_marginTop="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView4"
+        app:layout_constraintBottom_toBottomOf="@+id/email"
         app:layout_constraintEnd_toStartOf="@+id/email"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

@@ -123,21 +123,9 @@ class SignUp : AppCompatActivity() {
                 databaseRef.child("Auth").child("AllUsers").child(user.uid).child("LoggedInDevice").setValue("1")
                 databaseRef.child("Auth").child("AllUsers").child(user.uid).child("ChangedMonth").setValue(currentmonth)
                 databaseRef.child("Auth").child("AllUsers").child(user.uid).child("ChangedYear").setValue(currentyear)
-
                 startActivity(Intent(this,Userdashboard::class.java))
                 finish()
             }
-        else if(flag == 2) {
-                databaseRef.child("Users").child("Admin").child(user.uid).child("Username").setValue(name)
-                databaseRef.child("Users").child("Admin").child(user.uid).child("UserID").setValue(flag)
-                databaseRef.child("Users").child("Admin").child(user.uid).child("Email").setValue(email)
-                databaseRef.child("Users").child("Admin").child(user.uid).child("PhoneNo").setValue(phoneno)
-                databaseRef.child("Auth").child("AllUsers").child(user.uid).child("Username").setValue(name)
-                databaseRef.child("Auth").child("AllUsers").child(user.uid).child("UserID").setValue(flag)
-                startActivity(Intent(this,Admindashboard::class.java))
-                finish()
-            }
-
     }
 //move to login
     fun olduser(v: View) {
