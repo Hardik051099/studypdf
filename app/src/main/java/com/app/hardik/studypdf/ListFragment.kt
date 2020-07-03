@@ -133,6 +133,9 @@ class ListFragment : Fragment() {
             else if (t==2){
                 Toast.makeText(view.context,"Disable DELETE Mode First",Toast.LENGTH_LONG).show()
             }
+            else if (t==3){
+                Toast.makeText(view.context,"Disable RENAME Mode First",Toast.LENGTH_LONG).show()
+            }
             reload()
         }
         view.delete.setOnClickListener{
@@ -148,7 +151,28 @@ class ListFragment : Fragment() {
                 currentMode.updateClicked = 0
                 t=0
                 Toast.makeText(view.context,"DELETE Mode is OFF",Toast.LENGTH_LONG).show()
-
+            }
+            else if (t==3){
+                Toast.makeText(view.context,"Disable RENAME Mode First",Toast.LENGTH_LONG).show()
+            }
+            reload()
+        }
+        view.rename.setOnClickListener {
+            if(t==0) {
+                currentMode.updateClicked = 3
+                t=3
+                Toast.makeText(view.context,"RENAME Mode is ON. Long Click on any element to rename",Toast.LENGTH_LONG).show()
+            }
+            else if(t==1){
+                Toast.makeText(view.context,"Disable ADD Mode First",Toast.LENGTH_LONG).show()
+            }
+            else if (t==2){
+                Toast.makeText(view.context,"Disable DELETE Mode First",Toast.LENGTH_LONG).show()
+            }
+            else if (t==3){
+                currentMode.updateClicked = 0
+                t=0
+                Toast.makeText(view.context,"RENAME Mode is OFF",Toast.LENGTH_LONG).show()
             }
             reload()
         }
@@ -202,22 +226,45 @@ class ListFragment : Fragment() {
 fun listreader (parent:Item,parentlist:ArrayList<RecyclerViewItem>,p0:DataSnapshot,lvl:Int) {
        val parentlist = parentlist as MutableList<Item>
         var lvl = lvl
-    if (!(p0.hasChildren()) && lvl != 0){
+    if (!(p0.hasChildren()) && lvl != 0 && !(p0.key.toString().equals("name"))){
             Log.i("Leaf node", p0.key.toString()+" "+parent.getText() +"at level $lvl")
-        parent.setSecondText("__")
+        parent.setSecondText(p0.key.toString())
         }
         else if(lvl == 0){
-         val Level1list = ArrayList<RecyclerViewItem>() //as MutableList<Item>
+        val Level1list = ArrayList<RecyclerViewItem>() //as MutableList<Item>
         val lvl0 = Item(lvl)
-        lvl0.setText(p0.key.toString())
-        Level0list.add(lvl0)
-        var newlevel = lvl + 1
-        listreader(lvl0,Level1list,p0,newlevel)
+        if (p0.key.toString().equals("name")){
+
+        }
+        else if(p0.child("name").exists()){
+            lvl0.setText(p0.child("name").value.toString())
+            lvl0.setSecondText(p0.key.toString())
+            Level0list.add(lvl0)
+            var newlevel = lvl + 1
+            listreader(lvl0,Level1list,p0,newlevel)
+        }
+        else {
+            lvl0.setText(p0.key.toString())
+            lvl0.setSecondText(p0.key.toString())
+            Level0list.add(lvl0)
+            var newlevel = lvl + 1
+            listreader(lvl0,Level1list,p0,newlevel)
+        }
      }
         else {
             for (i in p0.children){
                 val item = Item(lvl)
-                item.setText(i.key.toString())
+                if (i.key.toString().equals("name")){
+                    continue
+                }
+                else if(i.child("name").exists()){
+                    item.setText(i.child("name").value.toString())
+                    item.setSecondText(i.key.toString())
+                }
+                else {
+                    item.setText(i.key.toString())
+                    item.setSecondText(i.key.toString())
+                }
                 parentlist.add(item)
                 parent.addChildren(parentlist as MutableList<RecyclerViewItem>)
                 val futurelist = ArrayList<RecyclerViewItem>()

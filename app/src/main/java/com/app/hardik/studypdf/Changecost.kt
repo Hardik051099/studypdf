@@ -82,41 +82,7 @@ class Changecost : AppCompatActivity() {
                 ) { dialog, whichButton ->
                     val newcost = edittext.text.toString()
                     val itemname = arrayList.get(position).substringBefore("."," ")
-                    //updating pdf price in both database trees "Links" and "Uploads"
-                    databaseReference.child("Links").child(itemname)
-                        .addListenerForSingleValueEvent(object :
-                            ValueEventListener {
-                            override fun onCancelled(p0: DatabaseError) {
-
-
-                            }
-
-                            override fun onDataChange(p0: DataSnapshot) {
-                                parentname = p0.child("parent").value.toString()
-                                enc = p0.child("encryptname").value.toString()
-                               // Log.i("logingParent", parentname)
-                               // Log.i("logingEncryptname", enc)
-                                databaseReference.child("SubjectPath")
-                                    .addListenerForSingleValueEvent(object :
-                                        ValueEventListener {
-                                        override fun onCancelled(p0: DatabaseError) {
-
-                                        }
-
-                                        override fun onDataChange(p0: DataSnapshot) {
-                                            path = p0.child(parentname).value.toString()
-                                            Log.i("logingPath", path)
-                                            val finalpath = path + "/" + enc
-                                            Log.i("logingFpath", finalpath)
-                                            databaseReference.child("Uploads").child(finalpath).child("price")
-                                                .setValue(newcost)
-                                        }
-
-                                    })
-
-                            }
-
-                        })
+                    //updating pdf price in database tree "Links"
                     databaseReference.child("Links").child(itemname).child("price").setValue(newcost)
                     Toast.makeText(
                         applicationContext,

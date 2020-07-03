@@ -9,6 +9,22 @@
     tools:showIn="@layout/fragment_list">
 
     <Button
+        android:id="@+id/rename"
+        style="@android:style/Widget.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/my_bg_btn"
+        android:text="Rename"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintStart_toEndOf="@+id/add"
+        app:layout_constraintEnd_toStartOf="@+id/delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <Button
         android:id="@+id/delete"
         style="@android:style/Widget.Button"
         android:layout_width="wrap_content"
@@ -19,7 +35,7 @@
         android:text="Delete"
         android:textColor="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/add"
+        app:layout_constraintStart_toEndOf="@+id/rename"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout
@@ -52,7 +68,7 @@
         android:background="@drawable/my_bg_btn"
         android:text="Add"
         android:textColor="@color/colorPrimaryDark"
-        app:layout_constraintEnd_toStartOf="@+id/delete"
+        app:layout_constraintEnd_toStartOf="@+id/rename"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

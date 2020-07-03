@@ -39,6 +39,7 @@ class Pdflist : AppCompatActivity() {
     var demointent = Intent()
     var path : String = ""
     var url : String = ""
+    var name : String = ""
     val urlMap = hashMapOf<String,String>()
     val keyMap = hashMapOf<String,String>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +48,7 @@ class Pdflist : AppCompatActivity() {
         pdflistname = findViewById(R.id.tittle)
         db = FirebaseDatabase.getInstance()
         dbrefer = db.getReference()
-        val name = intent.getStringExtra("name")
+        name = intent.getStringExtra("name")
         path = intent.getStringExtra("path")
         progressDialog = ProgressDialog(this)
         storage = Firebase.storage
@@ -94,7 +95,6 @@ class Pdflist : AppCompatActivity() {
                     intent.putExtra("key",keyMap.get(PdfList.get(position).text.toString()))
                     startActivity(intent)
                 }
-
                 //Intent is set to payment page after clicked Preview PDF will show demo of PDF
                 //it will open demo pdf viewer
                 builder.setNeutralButton("Preview PDF"){dialogInterface , which ->
@@ -106,7 +106,7 @@ class Pdflist : AppCompatActivity() {
                     demointent.putExtra("price",subprice)
                     demointent.putExtra("url",urlMap.get(PdfList.get(position).text.toString()))
                     demointent.putExtra("key",keyMap.get(PdfList.get(position).text.toString()))
-                   url = urlMap.get(PdfList.get(position).text.toString())!!
+                    url = urlMap.get(PdfList.get(position).text.toString())!!
                     downloadTask()
                 }
 
@@ -123,33 +123,39 @@ class Pdflist : AppCompatActivity() {
 
     }
 
+    //it reads all the pdfs available for leaf nodes and shows in list view
     fun readlist(){
-        //it reads all the pdfs available for leaf nodes and shows in list view
-        dbrefer.child("Uploads").child(path).addChildEventListener(object : ChildEventListener{
+        dbrefer.child("Links").addChildEventListener(object : ChildEventListener{
             override fun onCancelled(p0: DatabaseError) {
 
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-                var item = Item(0)
-                item.setText(p0.child("name").value.toString())
-                item.setSecondText(p0.child("price").value.toString()+" \u20B9")
-                urlMap.put(p0.child("name").value.toString(),p0.child("url").value.toString())
-                keyMap.put(p0.child("name").value.toString(),p0.key.toString())
-                PdfList.add(item)
-                myAdapter.notifyDataSetChanged()
+                if(p0.child("parent").value!!.equals(name)){
+                    var item = Item(0)
+                    item.setText(p0.child("name").value.toString())
+                    item.setSecondText(p0.child("price").value.toString()+" \u20B9")
+                    urlMap.put(p0.child("name").value.toString(),p0.child("url").value.toString())
+                    keyMap.put(p0.child("name").value.toString(),p0.child("encryptname").toString())
+                    PdfList.add(item)
+                    myAdapter.notifyDataSetChanged()
+                }
+
             }
+
             override fun onChildRemoved(p0: DataSnapshot) {
+
             }
 
         })
-
     }
 
     //Download pdf function and store in hidden folder in user storage

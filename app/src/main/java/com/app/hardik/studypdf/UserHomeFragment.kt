@@ -160,38 +160,49 @@ class UserHomeFragment : Fragment() {
     fun listreader (parent:Item,parentlist:ArrayList<RecyclerViewItem>,p0:DataSnapshot,lvl:Int) {
         val parentlist = parentlist as MutableList<Item>
         var lvl = lvl
-        if (!(p0.hasChildren()) && lvl != 0){
+        if (!(p0.hasChildren()) && lvl != 0 && !(p0.key.toString().equals("name"))){
             //to check if given subject has pdfs available or not
             var name = p0.key.toString()
             Log.i("Leaf node", name+" at level $lvl")
            var itemname =  parent.getText()
-            parent.setText("-> "+itemname) //IMP :- This "->" and "__" is used as Indicator for detecting leaf node so DO NOT CHANGE IT (You can replace but you have replace all its occurences)
+            parent.setText("-> "+itemname)
+            //IMP :- This "->" and "__" is used as Indicator for detecting leaf node so DO NOT CHANGE IT (You can replace but you have replace all its occurences)
             parent.setSecondText("__")
             db = FirebaseDatabase.getInstance()
             //listener for getting pdf count for leaf node
-            db.getReference("SubjectPath").child(name).addListenerForSingleValueEvent(object : ValueEventListener{
+            var count = 0
+            dbrefer.child("Links").addChildEventListener(object : ChildEventListener{
                 override fun onCancelled(p0: DatabaseError) {
 
                 }
 
-                override fun onDataChange(p0: DataSnapshot) {
-                   val path = p0.value.toString()
-                    dbrefer.child("Uploads").child(path).addListenerForSingleValueEvent(object : ValueEventListener{
-                        override fun onCancelled(p0: DatabaseError) {
+                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
 
-                        }
+                }
 
-                        override fun onDataChange(p0: DataSnapshot) {
-                            Log.i("path0 p0",path+p0.toString())
-                            if (p0.hasChildren()){
-                                parent.setSecondText(p0.childrenCount.toString()+" Pdfs Available")
-                            }
-                            else {
-                                parent.setSecondText("No Pdf Available")
-                            }
-                        }
+                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
 
-                    })
+                }
+
+                override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                    if(p0.child("parent").value!!.equals(name)){
+                        count++
+                    }
+                    if(count == 0 && (parent.text.substring(0,2).equals("->"))){
+                        parent.setSecondText("No Pdf Available")
+                    }
+                    else if (count > 0 && (parent.text.substring(0,2).equals("->"))){
+                        parent.setSecondText(count.toString()+" Pdfs Available")
+                    }
+                    if(!(parent.text.substring(0,2).equals("->")))
+                    {
+                        parent.setSecondText("")
+                    }
+                    myAdapter.notifyDataSetChanged()
+                }
+
+                override fun onChildRemoved(p0: DataSnapshot) {
+
                 }
 
             })
@@ -199,20 +210,44 @@ class UserHomeFragment : Fragment() {
         else if(lvl == 0){
             val Level1list = ArrayList<RecyclerViewItem>() //as MutableList<Item>
             val lvl0 = Item(lvl)
-            lvl0.setText(p0.key.toString())
-            Level0list.add(lvl0)
-            var newlevel = lvl + 1
-            listreader(lvl0,Level1list,p0,newlevel)
+            if (p0.key.toString().equals("name")){
+
+            }
+            else if(p0.child("name").exists()){
+                lvl0.setText(p0.child("name").value.toString())
+                Level0list.add(lvl0)
+                var newlevel = lvl + 1
+                lvl0.setSecondText("")
+                listreader(lvl0,Level1list,p0,newlevel)
+            }
+            else {
+                lvl0.setText(p0.key.toString())
+                Level0list.add(lvl0)
+                var newlevel = lvl + 1
+                lvl0.setSecondText("")
+                listreader(lvl0,Level1list,p0,newlevel)
+            }
+
         }
         else {
             for (i in p0.children){
                 val item = Item(lvl)
-                item.setText(i.key.toString())
+               if (i.key.toString().equals("name")){
+                   continue
+               }
+                else if(i.child("name").exists()){
+                    item.setText(i.child("name").value.toString())
+                }
+                else {
+                   item.setText(i.key.toString())
+               }
+                item.setSecondText("")
                 parentlist.add(item)
                 parent.addChildren(parentlist as MutableList<RecyclerViewItem>)
                 val futurelist = ArrayList<RecyclerViewItem>()
                 var newlevel = lvl + 1
                 listreader(item,futurelist,i,newlevel)
+                parent.setSecondText("")
             }
         }
     }

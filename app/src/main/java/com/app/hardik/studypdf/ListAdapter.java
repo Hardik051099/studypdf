@@ -17,10 +17,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.multilevelview.MultiLevelAdapter;
 import com.multilevelview.MultiLevelRecyclerView;
 
@@ -127,6 +131,26 @@ public class ListAdapter extends MultiLevelAdapter {
                     break;
             }
         }
+        else if(currentMode.INSTANCE.getUpdateClicked() == 3){
+            //RENAME Mode :- Yellow color range
+            switch (getItemViewType(position)%4) {
+                case 0:
+                    holder.itemView.setBackgroundColor(Color.parseColor("#FFFFB7"));
+                    break;
+                case 1:
+                    holder.itemView.setBackgroundColor(Color.parseColor("#FFF192"));
+                    break;
+                case 2:
+                    holder.itemView.setBackgroundColor(Color.parseColor("#FFEA61"));
+                    break;
+                case 3:
+                    holder.itemView.setBackgroundColor(Color.parseColor("#FFDD3C"));
+                    break;
+                default:
+                    holder.itemView.setBackgroundColor(Color.parseColor("#FFFFB7"));
+                    break;
+            }
+        }
 
         mViewHolder.mTitle.setText(mItem.getText());
         if(currentMode.INSTANCE.getUpdateClicked() == 1){
@@ -140,8 +164,16 @@ public class ListAdapter extends MultiLevelAdapter {
             mViewHolder.mSubtitle.setText("Long Click here to delete this Element");
             }
         }
+        else if(currentMode.INSTANCE.getUpdateClicked() == 3){
+            if(mItem.text.equals("All Available Categories")){
+
+            }
+           else {
+               mViewHolder.mSubtitle.setText("Long Click here to Rename this Element");
+            }
+        }
         else {
-            mViewHolder.mSubtitle.setText(mItem.getSecondText());
+            // mViewHolder.mSubtitle.setText(mItem.getSecondText());
         }
 
         if (mItem.hasChildren() && mItem.getChildren().size() > 0) {
@@ -185,13 +217,6 @@ public class ListAdapter extends MultiLevelAdapter {
                     mExpandIcon.animate().rotation(mListItems.get(getAdapterPosition()).isExpanded() ? 0 : -180).start();
                     //set click event on item here
                    // Toast.makeText(mContext, String.format(Locale.ENGLISH, "Item at position %d was clicked!", getAdapterPosition()), Toast.LENGTH_SHORT).show();
-                 /*  if(Apple.INSTANCE.getUpdateClicked() == 1){
-                        if(mListItems.get(getAdapterPosition()).getText().equals("New +")){
-                            Intent in = new Intent(v.getRootView().getContext(),AddIntoList.class);
-                            in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            v.getRootView().getContext().startActivity(in);
-                        }
-                    } */
                 }
             });
             //Events to occur after long clicking any item of our listview
@@ -206,8 +231,9 @@ public class ListAdapter extends MultiLevelAdapter {
                     //Initializing AlertDialog
                     AlertDialog.Builder alert = new AlertDialog.Builder(v.getRootView().getContext());
                     int level = mListItems.get(getAdapterPosition()).getLevel();
-                    final String currentName = mListItems.get(getAdapterPosition()).text;
-                    String path = "",parentname = "";
+                    final String currentName = mListItems.get(getAdapterPosition()).secondText;
+                    String path = "",parentpath="" , parentname = "";
+                    //String[] childlist = {};
                     Integer parent = 0;
 
                   /*
@@ -240,24 +266,29 @@ public class ListAdapter extends MultiLevelAdapter {
                   //Method to get path of current selected item
                     if(mListItems.get(getAdapterPosition()).text.equals("New +")){
                         path = "StreamList";
+                        parentpath = "StreamList";
                     }
                     else if (level == 0) {
                         path = "StreamList/" + currentName;
+                        parentpath = "StreamList/";
                     }
                     else {
                         for (int i=level ;i>0;i--)
                         {
                             parent = parentgive(i,1);
                             String a = parentname;
-                            String b = mListItems.get(getAdapterPosition() - parent).text;
+                            String b = mListItems.get(getAdapterPosition() - parent).secondText;
                             parentname = b+"/"+a;
                         }
                         path = "StreamList/"+parentname+currentName;
+                        parentpath = "StreamList/"+parentname;
                         Log.i("genpath",path);
                     }
 
                     final String finalPath = path;
+                    final String finalparentPath = parentpath;
 
+                    //DELETE Mode
                     if(currentMode.INSTANCE.getUpdateClicked() == 2) {
                         //Toast.makeText(mContext, String.format(Locale.ENGLISH, "Item at position %d was LONG clicked!", getAdapterPosition()), Toast.LENGTH_LONG).show();
 
@@ -269,15 +300,15 @@ public class ListAdapter extends MultiLevelAdapter {
                         alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 db = FirebaseDatabase.getInstance();
-                                dbrefer = db.getReference(finalPath);
+                                dbrefer = db.getReference();
                                 Log.i("finall delete",finalPath);
                                 //deleting item from database
-                                dbrefer.setValue(null);
+                                dbrefer.child(finalPath).setValue(null);
                                 dbrefer = db.getReference("SubjectPath");
                                 dbrefer.child(currentName).setValue(null);
                                 Toast.makeText(mContext,"Element Deleted successfully,Swipe Down to Refresh",Toast.LENGTH_LONG).show();
                              //  mlistFragment.reload();
-                                  }
+                            }
                         });
                         alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -288,6 +319,8 @@ public class ListAdapter extends MultiLevelAdapter {
 
 
                     }
+
+                    //ADD Mode
                     else if (currentMode.INSTANCE.getUpdateClicked() == 1){
                         final String finalPath2 = path+"/";
 
@@ -323,35 +356,44 @@ public class ListAdapter extends MultiLevelAdapter {
                             }
                         });
 
-
-
                         alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 db = FirebaseDatabase.getInstance();
                                 dbrefer = db.getReference();
-
-                                /*store input from user along with its parent elements in adder variable
+                                /*store input from user along with its parent elements in inputText variable
                                 for ex:- User adds child under "SEM 4" element and names it as "OOPM"
-                                 hence the value of adder will be "StreamList/Engineering/Computer Science/SEM 4/OOPM"
+                                 hence the value of inputText will be "StreamList/Engineering/Computer Science/SEM 4/OOPM"
                                  */
-                                String adder = input.getText().toString().trim();
+                                String inputText = input.getText().toString().trim();
 
                                 /*since our edittext already contains its parent elements (for getting the path)
-                                  so we split the adder variable and store actual input given by user in subname variable
+                                  so we split the inputText variable and store actual input given by user in subname variable
                                    hence the value of subname will be "OOPM"
                                   */
-                                String subname = adder.substring(adder.lastIndexOf("/") + 1);
+                                String subname = inputText.substring(inputText.lastIndexOf("/") + 1);
                                 Log.i("subname",subname);
 
-                                if(adder.equals(finalPath2)){
+                                if(inputText.equals(finalPath2)){
                                     Toast.makeText(mContext, "Error: Field can't be blank", Toast.LENGTH_SHORT).show();
                                     Log.i("exitt","eee");
                                     return;
                                 }
-                                Log.i("finall add",adder);
+                                if(subname.equals("name")){
+                                    Toast.makeText(mContext, "Error: Invalid name", Toast.LENGTH_SHORT).show();
+                                    Log.i("exitt","eee");
+                                    return;
+                                }
+
+                                Log.i("finall add",inputText);
                                 try{
-                                dbrefer.child(adder).setValue(adder);
-                                dbrefer.child("SubjectPath").child(subname).setValue(adder);
+                                if(finalPath == finalparentPath){
+                                    dbrefer.child(inputText).setValue(inputText);
+                                }
+                                else{
+                                    dbrefer.child(inputText).setValue(inputText);
+                                    dbrefer.child(finalPath).child("name").setValue(currentName);
+                                }
+                                dbrefer.child("SubjectPath").child(subname).setValue(inputText);
                                 dbrefer.child("SubjectPath").child(currentName).setValue(null);
                                 }
                                 catch (Exception e){
@@ -368,8 +410,65 @@ public class ListAdapter extends MultiLevelAdapter {
                         });
                         alert.show();
                     }
+
+                    //RENAME Mode
+                    else if (currentMode.INSTANCE.getUpdateClicked() == 3){
+                        //setting alert dilogue for rename mode
+                        alert.setTitle("Do you want to Rename this element?");
+                        alert.setMessage("Enter New Name for this element");
+                        final EditText input = new EditText(v.getRootView().getContext());
+                        alert.setView(input);
+                        alert.setPositiveButton("Change", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                db = FirebaseDatabase.getInstance();
+                                dbrefer = db.getReference();
+                                final String inputText = input.getText().toString().trim();
+                                if(inputText.isEmpty()){
+                                    Toast.makeText(mContext, "Error: Field can't be blank", Toast.LENGTH_SHORT).show();
+                                    Log.i("exitt","eee");
+                                    return;
+                                }
+                                if(inputText.equals("name")){
+                                    Toast.makeText(mContext, "Error: Invalid Name", Toast.LENGTH_SHORT).show();
+                                    Log.i("exitt","eee");
+                                    return;
+                                }
+                                try{
+                                    dbrefer.child(finalPath).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if(dataSnapshot.hasChild("name")){
+                                                dbrefer.child(finalPath).child("name").setValue(inputText);
+                                            }
+                                            else {
+                                                dbrefer.child(finalparentPath).child(inputText).setValue(finalparentPath+"/"+currentName);
+                                                dbrefer.child(finalPath).setValue(null);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+                                catch (Exception e){
+                                    Toast.makeText(mContext,String.valueOf(e),Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+
+                        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //on cancel
+                            }
+                        });
+                        alert.show();
+                    }
                     else {
-                        Toast.makeText(mContext,"To Add or Delete an item , Please click on the buttons above",Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext,"To Add,Delete or Rename an item , Please click on the buttons above",Toast.LENGTH_LONG).show();
                     }
                     return true;
                 }

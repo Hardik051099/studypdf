@@ -52,7 +52,8 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_paymentpage)
-        //preloading checkout
+
+        //preloading razorpay checkout
         Checkout.preload(getApplicationContext())
 
         fname = findViewById(R.id.fullname)
@@ -88,7 +89,7 @@ class Paymentpage : AppCompatActivity(), PaymentResultListener {
 
 
     }
-
+//Inbuilt Razorpay function for payment gateway
     private fun startPayment() {
         /*
         *  You need to pass current activity in order to let Razorpay create CheckoutActivity

@@ -48,8 +48,19 @@ class Adminsettings : AppCompatActivity() {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 //username of each user
                 val user = p0.child("Username").value.toString()
-                keyMap.put(/*username as key*/ p0.child("Username").value.toString(),/*uuid as value*/p0.key.toString())
-                arrayList.add(user)
+               if (p0.child("isBlocked").exists()) {
+                   if (p0.child("isBlocked").value!!.equals(true)) {
+                       keyMap.put(/*username as key*/ p0.child("Username").value.toString()+ " :- BLOCKED!",/*uuid as value*/p0.key.toString())
+                       arrayList.add(user + " :- BLOCKED!")
+                   } else {
+                       keyMap.put(/*username as key*/ p0.child("Username").value.toString(),/*uuid as value*/p0.key.toString())
+                       arrayList.add(user)
+                   }
+               }
+                else {
+                   keyMap.put(/*username as key*/ p0.child("Username").value.toString(),/*uuid as value*/p0.key.toString())
+                   arrayList.add(user)
+               }
                 //adapter
                 arrayAdapter = ArrayAdapter(
                     applicationContext,
@@ -83,14 +94,19 @@ class Adminsettings : AppCompatActivity() {
                         override fun onDataChange(p0: DataSnapshot) {
                             if (p0.hasChild(uid)){
                                 databaseReference.child("blockedUsers").child(uid).setValue(null)
+                                databaseReference.child("Users").child("Students").child(uid).child("isBlocked").setValue(false)
                                 Toast.makeText(this@Adminsettings,"User is Successfully Unblocked",Toast.LENGTH_LONG).show()
                                 view!!.setBackgroundColor(Color.WHITE)
+                                finish()
+                                startActivity(intent)
                             }
                             else{
                                 databaseReference.child("blockedUsers").child(uid).setValue(true)
+                                databaseReference.child("Users").child("Students").child(uid).child("isBlocked").setValue(true)
                                 Toast.makeText(this@Adminsettings,"User is Successfully Blocked",Toast.LENGTH_LONG).show()
                                 view!!.setBackgroundColor(Color.RED)
-
+                                finish()
+                                startActivity(intent)
                             }
                         }
 

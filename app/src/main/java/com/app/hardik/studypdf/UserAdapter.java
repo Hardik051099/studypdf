@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
 import com.multilevelview.MultiLevelAdapter;
 import com.multilevelview.MultiLevelRecyclerView;
@@ -72,8 +71,12 @@ public class UserAdapter extends MultiLevelAdapter {
         mViewHolder.mTitle.setGravity(Gravity.CENTER_VERTICAL);
         if (mItem.getText().substring(0,2).equals("->")){
             mViewHolder.mSubtitle.setText(mItem.getSecondText());
+            Log.i("LeafNode",mItem.getText().substring(0,2)+mItem.getText());
         }
-//       mViewHolder.mSubtitle.setText(mItem.getSecondText());
+        else{
+            mViewHolder.mSubtitle.setText("");
+        }
+        //   mViewHolder.mSubtitle.setText(mItem.getSecondText());
 
         if (mItem.hasChildren() && mItem.getChildren().size() > 0) {
             setExpandButton(mViewHolder.mExpandIcon, mItem.isExpanded());

@@ -52,13 +52,13 @@ class Uploadsection : AppCompatActivity() {
         path = intent.getStringExtra("path") + "/"
         editTextFilename.setText(filetitle)
         firebaseDatabase = FirebaseDatabase.getInstance()
-        databaseReference = firebaseDatabase.getReference("Uploads/" + path)
+        databaseReference = firebaseDatabase.getReference()
         dbrefr = firebaseDatabase.getReference()
         firebaseStorage = FirebaseStorage.getInstance().getReference()
         upload.isEnabled = false
     }
 
-//choosefile button
+    //choosefile button
     fun choosefile(v: View) {
         getPDF()
     }
@@ -149,22 +149,19 @@ class Uploadsection : AppCompatActivity() {
             sRef.downloadUrl
         }
             .addOnCompleteListener{task ->
-            if(task.isSuccessful){
+                val key = databaseReference.push().getKey()!!
+                if(task.isSuccessful){
                 val downloadUri = task.result
                 val upload = Upload(
                     filename,
-                    downloadUri.toString(),priceval
+                    downloadUri.toString(),priceval,filetitle,key
                 )
                 textViewStatus.text = "File Uploaded Successfully"
                 progressBar.visibility = View.GONE
-                val key = databaseReference.push().getKey()!!
-                databaseReference.child(key).setValue(upload)
 
-                //store details related to uploaded file in firebase database
-                dbrefr.child("Links").child(filename).child("url").setValue(downloadUri.toString())
-                dbrefr.child("Links").child(filename).child("encryptname").setValue(key)
-                dbrefr.child("Links").child(filename).child("parent").setValue(filetitle)
-                dbrefr.child("Links").child(filename).child("price").setValue(priceval)
+                    //store details related to uploaded file in firebase database
+                    databaseReference.child("Links").child(filename).setValue(upload)
+                    databaseReference.child("Uploads").child(path).child(key).setValue(upload)
 
             }
             else{
