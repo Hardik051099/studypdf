@@ -245,10 +245,11 @@ class SearchFragment : Fragment() {
         for (value in subpath) {
             if (value.toUpperCase().contains(name.toUpperCase().toRegex())) {
                 Log.i("subpath",value)
-                Depflag = value.substring(value.indexOf("/") + 1, value.lastIndexOf("/") - 1)
-                Log.i("subpath2",Depflag)
-                Depflag = Depflag.substring(Depflag.indexOf("/") + 1, Depflag.lastIndexOf("/"))
-                Log.i("subpath3",Depflag)
+                Depflag = value.substring(value.indexOf("/")+1)
+                if (Depflag.contains("/")){
+                Depflag = Depflag.substring(Depflag.indexOf("/")+1)}
+                if (Depflag.contains("/")){
+                Depflag = Depflag.substring(0,Depflag.indexOf("/"))}
                 newsublist.add(c,subkey[subpath.indexOf(value)] + "\n" + Depflag)
                 c += 1
             }
